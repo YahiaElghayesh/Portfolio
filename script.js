@@ -5,7 +5,7 @@ const PROJECTS = [
     title: "Stereotactic Neurosurgery Frame",
     category: "medical",
     categoryLabel: "Medical Devices",
-    img: "assets/img/projects/neurosurgery-frame.webp",
+    images: ["assets/img/projects/neurosurgery-frame.webp"],
     desc: "A stereotactic targeting system developed as part of clinical research to deliver a manufacturable, lower-cost alternative to conventional stereotactic surgery platforms.",
     highlights: [
       "Sub-millimeter targeting accuracy across 100 validation trials.",
@@ -21,7 +21,7 @@ const PROJECTS = [
     title: "Automated Cell for an Ophthalmic Lab",
     category: "automation",
     categoryLabel: "Automation & Robotics",
-    img: "assets/img/projects/ophthalmic-cell.webp",
+    images: ["assets/img/projects/ophthalmic-cell.webp"],
     desc: "An automated cell that handles job trays in an ophthalmic lab environment, supporting tray preparation, orientation, and transfer to downstream processes.",
     highlights: [
       "Reverse-engineered the workflow from industry best practices and solved reach and safety constraints with an efficient cell layout.",
@@ -36,7 +36,7 @@ const PROJECTS = [
     title: "SKYCARE Kit",
     category: "medical",
     categoryLabel: "Medical Devices",
-    img: "assets/img/projects/skycare-kit.webp",
+    images: ["assets/img/projects/skycare-kit.webp"],
     desc: "A medical support box that enables guided self-checks and remote doctor assistance in emergencies, such as in-flight incidents, remote locations, or situations without immediate professional care.",
     highlights: [
       "Designed dedicated slots that keep medical devices secure, protected, and easy to access during urgent use.",
@@ -50,7 +50,7 @@ const PROJECTS = [
     title: "Medical Devices' Storage Solution for a Smart Wellness Mirror",
     category: "medical",
     categoryLabel: "Medical Devices",
-    img: "assets/img/projects/smart-mirror.webp",
+    images: ["assets/img/projects/smart-mirror.webp"],
     desc: "A storage and access solution that organizes and protects medical devices while integrating seamlessly with a smart mirror for guided health checks.",
     highlights: [
       "Engineered a storage solution that fits the existing smart mirror while preserving its original ergonomics and dimensions.",
@@ -64,7 +64,7 @@ const PROJECTS = [
     title: "Network Active Monitoring Probe V2 [INOS Watcher]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-watcher-v2.webp",
+    images: ["assets/img/projects/inos-watcher-v2.webp"],
     desc: "Perform large-scale, unattended 24/7 measurement of live 4G/5G networks in fixed and mobile locations such as airports, stadiums, shopping malls, and trains.",
     highlights: [
       "Filled a market gap by designing a probe that houses four devices while withstanding harsh indoor environments and high temperatures.",
@@ -77,7 +77,7 @@ const PROJECTS = [
     title: "Network Active Monitoring Probe V1 [INOS Watcher]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-watcher-v1.webp",
+    images: ["assets/img/projects/inos-watcher-v1.webp"],
     desc: "Perform large-scale, unattended 24/7 measurement of live 4G/5G networks in fixed and mobile locations such as airports, stadiums, shopping malls, and trains.",
     highlights: [
       "Integrated multiple high-heat devices into a compact, efficient design, ensuring seamless operation under demanding conditions.",
@@ -91,7 +91,7 @@ const PROJECTS = [
     title: "In-Building Network Measurement Solution V2 [INOS Lite]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-lite-v2.webp",
+    images: ["assets/img/projects/inos-lite-v2.webp"],
     desc: "Carry-on solution for benchmarking multiple wireless networks and technologies simultaneously for indoors and confined spaces.",
     highlights: [
       "Optimized a lightweight, ergonomic design to accommodate 12 phones, a router, a scanning device, and an antenna.",
@@ -106,7 +106,7 @@ const PROJECTS = [
     title: "In-Building Network Measurement Solution V1 [INOS Lite]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-lite-v1.webp",
+    images: ["assets/img/projects/inos-lite-v1.webp"],
     desc: "Carry-on solution for benchmarking multiple wireless networks and technologies simultaneously for indoors and confined spaces.",
     highlights: [
       "Designed, built, and delivered the solution in just 30 days.",
@@ -119,7 +119,7 @@ const PROJECTS = [
     title: "Drone Based Network Testing Solution [INOS Air]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-air.webp",
+    images: ["assets/img/projects/inos-air.webp"],
     desc: "Measures and analyzes network performance for low-altitude cellular networks. This solution supports various applications, including infrastructure inspection, high-rise building coverage analysis, and drone delivery services.",
     highlights: [
       "Designed to support four devices while maintaining a lightweight, compact form.",
@@ -131,7 +131,7 @@ const PROJECTS = [
     title: "Network Drive Test Solution V2 [INOS Gauge]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-gauge-v2.webp",
+    images: ["assets/img/projects/inos-gauge-v2.webp"],
     desc: "Drive Test / Outdoor Test kit for network optimization, providing real-world performance insights to enhance coverage, signal quality, and network reliability.",
     highlights: [
       "Engineered a highly portable, self-contained unit for seamless deployment in various environments.",
@@ -145,7 +145,7 @@ const PROJECTS = [
     title: "Network Drive Test Solution V1 [INOS Gauge]",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/inos-gauge-v1.webp",
+    images: ["assets/img/projects/inos-gauge-v1.webp"],
     desc: "Drive Test / Outdoor Test kit for network optimization, providing real-world performance insights to enhance coverage, signal quality, and network reliability.",
     highlights: [
       "Delivered full functionality with minimal time for custom designs.",
@@ -159,7 +159,7 @@ const PROJECTS = [
     title: "Long Range Network Benchmarking Solution",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/long-range-benchmark.webp",
+    images: ["assets/img/projects/long-range-benchmark.webp"],
     desc: "Drive Test / Outdoor Test kit for network optimization, providing real-world performance insights to enhance coverage, signal quality, and network reliability.",
     highlights: [
       "Built a rugged yet portable solution to withstand harsh field conditions.",
@@ -172,7 +172,7 @@ const PROJECTS = [
     title: "General Purpose Network Benchmarking Solution",
     category: "telecom",
     categoryLabel: "Telecom Testing",
-    img: "assets/img/projects/general-benchmark.webp",
+    images: ["assets/img/projects/general-benchmark.webp"],
     desc: "Light testing for indoors and outdoors. A cost-effective and versatile solution for temporary test scenarios.",
     highlights: [
       "Designed for low cost and minimal maintenance.",
@@ -185,7 +185,7 @@ const PROJECTS = [
     title: "Automotive Exhaust Gas Sampler",
     category: "research",
     categoryLabel: "Instrumentation",
-    img: "assets/img/projects/exhaust-gas-sampler.webp",
+    images: ["assets/img/projects/exhaust-gas-sampler.webp"],
     desc: "Real-time analysis of vehicle emissions. It samples exhaust gases, conditions them through filtering, cooling, and water separation, and then measures different components' concentrations using a series of sensors.",
     highlights: [
       "Engineered a gas conditioning system from scratch, sourcing components globally with seamless integration.",
@@ -199,7 +199,7 @@ const PROJECTS = [
     title: "Multiparameter Water Quality Sonde",
     category: "environmental",
     categoryLabel: "Environmental & Agri-Tech",
-    img: "assets/img/projects/water-quality-sonde.webp",
+    images: ["assets/img/projects/water-quality-sonde.webp"],
     desc: "Long-term continuous water quality monitoring in agricultural applications.",
     highlights: [
       "Manufactured the sonde from a material resistant to brackish agricultural waste and reinforced it with an epoxy coating for enhanced chemical durability.",
@@ -212,7 +212,7 @@ const PROJECTS = [
     title: "Rain Precipitation | Emissions & Air Quality Monitoring Stations",
     category: "environmental",
     categoryLabel: "Environmental & Agri-Tech",
-    img: "assets/img/projects/rain-monitoring.webp",
+    images: ["assets/img/projects/rain-monitoring.webp"],
     desc: "Measurement and prediction of weather patterns in agricultural applications.",
     highlights: [
       "Built a versatile system for both field deployment and showcase display by enabling quick swapping of the mounting post.",
@@ -226,7 +226,7 @@ const PROJECTS = [
     title: "Ground Penetration Radar (GPR)",
     category: "research",
     categoryLabel: "Research · Graduation Project",
-    img: "assets/img/projects/gpr.webp",
+    images: ["assets/img/projects/gpr.webp"],
     desc: "GPR that generates images of sub-surface layers for early detection of defects in concrete structures.",
     highlights: [
       "Developed a GPR that creates images of sub-surface layers to assess concrete conditions and analyze underground utilities.",
@@ -240,7 +240,7 @@ const PROJECTS = [
     title: "Minesweeping Robot",
     category: "automation",
     categoryLabel: "Automation & Robotics",
-    img: "assets/img/projects/minesweeping-robot.webp",
+    images: ["assets/img/projects/minesweeping-robot.webp"],
     desc: "An autonomous robot designed to scan fields for mines, effectively avoiding them while mapping their locations.",
     highlights: [
       "Participated in The International Robotic Competition on Humanitarian Demining in Egypt for two consecutive years.",
@@ -271,13 +271,15 @@ function renderProjects() {
   grid.innerHTML = PROJECTS.map((p, i) => `
     <article class="project-card reveal" data-category="${p.category}" data-id="${p.id}" style="transition-delay:${(i % 6) * 60}ms">
       <div class="card-media">
-        <img src="${p.img}" alt="${p.title}" loading="lazy">
+        <img src="${p.images[0]}" alt="${p.title}" loading="lazy">
       </div>
       <div class="card-body">
-        <p class="card-tag">${p.categoryLabel}</p>
-        <h3>${p.title}</h3>
-        <p>${p.desc}</p>
-        <p class="card-more">View details →</p>
+        <span class="card-index">${String(i + 1).padStart(2, "0")}</span>
+        <div class="card-text">
+          <p class="card-tag">${p.categoryLabel}</p>
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+        </div>
       </div>
     </article>
   `).join("");
@@ -310,16 +312,44 @@ const modalCategory = document.getElementById("modal-category");
 const modalTitle = document.getElementById("modal-title");
 const modalDesc = document.getElementById("modal-desc");
 const modalHighlights = document.getElementById("modal-highlights");
+const modalPrev = document.getElementById("modal-prev");
+const modalNext = document.getElementById("modal-next");
+const modalCounter = document.getElementById("modal-counter");
+const modalThumbs = document.getElementById("modal-thumbs");
+
+let activeProject = null;
+let activeImageIndex = 0;
+
+function renderModalImage() {
+  if (!activeProject) return;
+  const images = activeProject.images;
+  modalImg.src = images[activeImageIndex];
+  modalImg.alt = `${activeProject.title} — image ${activeImageIndex + 1} of ${images.length}`;
+
+  const multi = images.length > 1;
+  modalPrev.style.display = multi ? "flex" : "none";
+  modalNext.style.display = multi ? "flex" : "none";
+  modalCounter.style.display = multi ? "block" : "none";
+  modalCounter.textContent = `${activeImageIndex + 1} / ${images.length}`;
+
+  modalThumbs.style.display = multi ? "flex" : "none";
+  if (multi) {
+    modalThumbs.innerHTML = images.map((src, i) => `
+      <img src="${src}" alt="Thumbnail ${i + 1}" class="${i === activeImageIndex ? "is-active" : ""}" data-index="${i}">
+    `).join("");
+  }
+}
 
 function openModal(id) {
   const p = PROJECTS.find(x => x.id === id);
   if (!p) return;
-  modalImg.src = p.img;
-  modalImg.alt = p.title;
+  activeProject = p;
+  activeImageIndex = 0;
   modalCategory.textContent = p.categoryLabel;
   modalTitle.textContent = p.title;
   modalDesc.textContent = p.desc;
   modalHighlights.innerHTML = p.highlights.map(h => `<li>${h}</li>`).join("");
+  renderModalImage();
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-lock");
@@ -331,10 +361,32 @@ function closeModal() {
   document.body.classList.remove("modal-lock");
 }
 
+function showPrevImage() {
+  if (!activeProject) return;
+  activeImageIndex = (activeImageIndex - 1 + activeProject.images.length) % activeProject.images.length;
+  renderModalImage();
+}
+function showNextImage() {
+  if (!activeProject) return;
+  activeImageIndex = (activeImageIndex + 1) % activeProject.images.length;
+  renderModalImage();
+}
+
 document.getElementById("modal-close").addEventListener("click", closeModal);
 document.getElementById("modal-backdrop").addEventListener("click", closeModal);
+modalPrev.addEventListener("click", showPrevImage);
+modalNext.addEventListener("click", showNextImage);
+modalThumbs.addEventListener("click", (e) => {
+  const thumb = e.target.closest("img[data-index]");
+  if (!thumb) return;
+  activeImageIndex = Number(thumb.dataset.index);
+  renderModalImage();
+});
 document.addEventListener("keydown", (e) => {
+  if (!modal.classList.contains("is-open")) return;
   if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowLeft") showPrevImage();
+  if (e.key === "ArrowRight") showNextImage();
 });
 
 // ---------- Mobile nav ----------
