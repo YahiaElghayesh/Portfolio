@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharp AC Control — Broadlink RM4</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Sharp AC Control</h1>
+  <p class="sub">Local web remote for your Broadlink RM4 Mini</p>
+</header>
+
+<main>
+  <section class="card" id="device-card">
+    <h2>1. Device</h2>
+    <div id="device-status" class="status">Checking…</div>
+
+    <div class="row">
+      <button id="btn-discover">Scan network</button>
+      <span id="discover-status" class="hint"></span>
+    </div>
+    <div id="discovered-list" class="device-list"></div>
+
+    <div class="row manual-connect">
+      <input id="manual-ip" type="text" placeholder="Or enter RM4 Mini IP manually, e.g. 192.168.1.42">
+      <button id="btn-connect-ip">Connect</button>
+    </div>
+    <p class="hint">The RM4 Mini must already be joined to your Wi-Fi (set up once via the official Broadlink app), and this page must be opened on a device on the same network.</p>
+  </section>
+
+  <section class="card" id="learn-card">
+    <h2>2. Learn a command</h2>
+    <p class="hint">Name the command (e.g. "Cool 24 Auto"), click Start, then point your Sharp AC's physical remote at the RM4 Mini and press the matching button within 20 seconds.</p>
+    <div class="row">
+      <input id="learn-name" type="text" placeholder="Command name">
+      <button id="btn-learn">Start learning</button>
+    </div>
+    <div id="learn-status" class="status"></div>
+  </section>
+
+  <section class="card" id="commands-card">
+    <h2>3. Saved commands</h2>
+    <div id="command-grid" class="command-grid"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
