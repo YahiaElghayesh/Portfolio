@@ -1,14 +1,13 @@
 # Yahia Elghayesh — Portfolio
 
-A static portfolio website built from Yahia Elghayesh's product design & hardware engineering portfolio: 18 projects across medical devices, telecom field-testing equipment, environmental monitoring, and robotics.
+A static portfolio website built from Yahia Elghayesh's product design & hardware engineering portfolio: 20 case studies across medical devices, telecom field-testing equipment, environmental monitoring, and robotics.
 
 ## Structure
 
 - `index.html` — page markup
-- `styles.css` — dark, engineering-inspired theme
-- `script.js` — project data, filtering, modal, scroll reveals
+- `styles.css` — dark, editorial engineering theme
+- `script.js` — case study data, filtering, gallery modal, scroll reveals
 - `assets/img/` — optimized project renders and photos (WebP)
-- `assets/files/` — downloadable source portfolio PDF
 
 ## Running locally
 
