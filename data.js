@@ -8,7 +8,7 @@ const WORKSHOP_STRIP = [
   { file: "assets/img/workshop-set/5.webp", alt: "Yahia standing in his home workshop surrounded by organized hand tools" },
 ];
 
-// ---------- Companies worked with (text wordmarks; logos to be added later) ----------
+// ---------- Companies worked with (logos where sourced; falls back to wordmark) ----------
 const PARTNERS = [
   { name: "Digis Squared" },
   { name: "Devonics" },
@@ -18,21 +18,35 @@ const PARTNERS = [
   { name: "MSA University Center of Excellence" },
 ];
 
-// ---------- Toolbox (with custom line-icon per category) ----------
-const ICON_CAD = `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 4 42 14v20L24 44 6 34V14Z"/><path d="M24 4v20M24 24 6 14M24 24l18-10M24 24v20"/></svg>`;
-const ICON_ELECTRONICS = `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="16" y="16" width="16" height="16" rx="1.5"/><path d="M20 16v-6M28 16v-6M20 38v-6M28 38v-6M16 20h-6M16 28h-6M32 20h6M32 28h6"/><circle cx="21" cy="21" r="1.2" fill="currentColor" stroke="none"/><circle cx="27" cy="27" r="1.2" fill="currentColor" stroke="none"/></svg>`;
-const ICON_VIZ = `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M24 8 4 18l20 10 20-10Z"/><path d="M4 26l20 10 20-10M4 34l20 10 20-10"/></svg>`;
-
+// ---------- Toolbox (real vendor logos where available, monogram fallback otherwise) ----------
 const TOOLBOX = [
-  { name: "CAD", icon: ICON_CAD, tools: ["SOLIDWORKS", "Blender", "Fusion 360", "AutoCAD"], detail: "Modeling, Assembly, Simulation, Surfacing, Weldments, Sheet Metal, Drawings" },
-  { name: "Electronics & PCB Design", icon: ICON_ELECTRONICS, tools: ["Altium Designer", "EasyEDA", "NI Multisim", "Arduino"], detail: "" },
-  { name: "Visualization & Documentation", icon: ICON_VIZ, tools: ["SOLIDWORKS Visualize", "SOLIDWORKS Composer", "Adobe Creative Suite", "Microsoft Office Suite"], detail: "" },
+  { name: "CAD", tools: [
+      { name: "SOLIDWORKS", logo: "assets/img/logos/dassaultsystemes.svg" },
+      { name: "Blender", logo: "assets/img/logos/blender.svg" },
+      { name: "Fusion 360", logo: null },
+      { name: "AutoCAD", logo: "assets/img/logos/autocad.svg" },
+    ], detail: "Modeling, Assembly, Simulation, Surfacing, Weldments, Sheet Metal, Drawings" },
+  { name: "Electronics & PCB Design", tools: [
+      { name: "Altium Designer", logo: null },
+      { name: "EasyEDA", logo: "assets/img/logos/easyeda.svg" },
+      { name: "NI Multisim", logo: "assets/img/logos/multisim.svg" },
+      { name: "Arduino", logo: "assets/img/logos/arduino.svg" },
+    ], detail: "" },
+  { name: "Visualization & Documentation", tools: [
+      { name: "SOLIDWORKS Visualize", logo: "assets/img/logos/dassaultsystemes.svg" },
+      { name: "SOLIDWORKS Composer", logo: "assets/img/logos/dassaultsystemes.svg" },
+      { name: "Adobe Creative Suite", logo: null },
+      { name: "Microsoft Office Suite", logo: null },
+    ], detail: "" },
 ];
 
-// ---------- Certification badges (custom seals, not official artwork) ----------
+// ---------- Certification badges ----------
+// Custom seal (not official artwork) paired with the real Dassault Systèmes mark —
+// SOLIDWORKS is a Dassault Systèmes brand, and DS does not publish per-tier CSWP badge files for reuse.
 function certBadgeSVG() {
   return `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="29" stroke="currentColor" stroke-width="1.3"/><circle cx="32" cy="32" r="23.5" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/><path d="M23 33.5 29 39.5 41 25.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
+const CERT_ISSUER_LOGO = "assets/img/logos/dassaultsystemes.svg";
 const CERTS = [
   { code: "CSWP", name: "CAD Design Professional" },
   { code: "CSWP-SM", name: "Sheet Metal Professional" },
@@ -41,285 +55,17 @@ const CERTS = [
 
 const EXPAND_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H4a1 1 0 0 0-1 1v4M16 3h4a1 1 0 0 1 1 1v4M8 21H4a1 1 0 0 1-1-1v-4M16 21h4a1 1 0 0 0 1-1v-4"/></svg>`;
 
-// ---------- Reveal on scroll ----------
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("is-visible");
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1 });
-function observeReveal(el) { revealObserver.observe(el); }
-
-// ---------- Render: certifications ----------
-const certList = document.getElementById("cert-list");
-certList.innerHTML = CERTS.map(c => `
-  <li>
-    <span class="cert-badge">${certBadgeSVG()}</span>
-    <span class="cert-name"><strong>${c.code}</strong><em>${c.name}</em></span>
-  </li>
-`).join("");
-
-// ---------- Render: toolbox ----------
-const toolboxGrid = document.getElementById("toolbox-grid");
-toolboxGrid.innerHTML = TOOLBOX.map(t => `
-  <div class="toolbox-col reveal">
-    <span class="toolbox-icon">${t.icon}</span>
-    <h3>${t.name}</h3>
-    <p class="toolbox-list">${t.tools.join(" — ")}</p>
-    ${t.detail ? `<p class="toolbox-detail">${t.detail}</p>` : ""}
-  </div>
-`).join("");
-document.querySelectorAll(".toolbox-col").forEach(observeReveal);
-
-// ---------- Render: partners ----------
-const partnersRow = document.getElementById("partners-row");
-partnersRow.innerHTML = PARTNERS.map(p => `
-  <div class="partner-item reveal">
-    ${p.logo ? `<img src="${p.logo}" alt="${p.name}">` : `<span class="partner-name">${p.name}</span>`}
-  </div>
-`).join("");
-document.querySelectorAll(".partner-item").forEach(observeReveal);
-
-// ---------- Render: workshop strip ----------
-const workshopStrip = document.getElementById("workshop-strip");
-workshopStrip.innerHTML = WORKSHOP_STRIP.map(w => `
-  <div class="strip-item reveal"><img src="${w.file}" alt="${w.alt}" loading="lazy"></div>
-`).join("");
-document.querySelectorAll(".strip-item").forEach(observeReveal);
-
-// ---------- Render: fields & case units ----------
-const fieldsEl = document.getElementById("fields");
-
-function carouselHTML(images, unitIndex) {
-  return `
-    <div class="carousel" data-unit="${unitIndex}">
-      <div class="carousel-track">
-        ${images.map(im => `
-          <div class="carousel-slide kind-${im.kind}">
-            <img src="${im.file}" alt="" loading="lazy">
-          </div>
-        `).join("")}
-      </div>
-      ${images.length > 1 ? `
-        <button class="carousel-arrow carousel-prev" aria-label="Previous image">&larr;</button>
-        <button class="carousel-arrow carousel-next" aria-label="Next image">&rarr;</button>
-        <div class="carousel-dots">
-          ${images.map((_, i) => `<button class="carousel-dot ${i === 0 ? "is-active" : ""}" data-index="${i}" aria-label="Image ${i + 1}"></button>`).join("")}
-        </div>
-      ` : ""}
-      <button class="carousel-expand" aria-label="View full size">${EXPAND_ICON}</button>
-    </div>
-  `;
-}
-
-let unitCounter = 0;
-
-function unitHTML(unit, sideIndex) {
-  const idx = unitCounter++;
-  const hasVersions = unit.versions.length > 1;
-  const v0 = unit.versions[0];
-  const side = sideIndex % 2 === 0 ? "" : "is-reversed";
-  return `
-    <article class="case-unit ${side}" data-unit-index="${idx}" data-id="${unit.id}">
-      <div class="case-media">
-        ${carouselHTML(v0.images, idx)}
-      </div>
-      <div class="case-content">
-        ${hasVersions ? `
-          <div class="version-switcher">
-            ${unit.versions.map((v, i) => `<button class="version-btn ${i === 0 ? "is-active" : ""}" data-vindex="${i}">${v.versionLabel}</button>`).join("")}
-          </div>
-        ` : ""}
-        <p class="card-tag">${unit.categoryLabel}</p>
-        <h4 class="unit-title">${unit.title}</h4>
-        ${unit.subtitle ? `<p class="case-subtitle">${unit.subtitle}</p>` : ""}
-        <p class="case-desc">${v0.desc}</p>
-        <ul class="case-highlights">${v0.highlights.map(h => `<li>${h}</li>`).join("")}</ul>
-      </div>
-    </article>
-  `;
-}
-
-function renderFields() {
-  fieldsEl.innerHTML = FIELDS.map(field => `
-    <div class="field-group" data-category="${field.category}">
-      <div class="field-head reveal">
-        <h3>${field.categoryLabel}</h3>
-        <span class="field-count">${field.units.length} ${field.units.length === 1 ? "project" : "projects"}</span>
-      </div>
-      ${field.units.map((u, i) => unitHTML(u, i)).join("")}
-    </div>
-  `).join("");
-
-  // store unit data on elements for lookup
-  document.querySelectorAll(".case-unit").forEach(el => {
-    observeReveal(el);
-    const idx = Number(el.dataset.unitIndex);
-    el._unitData = findUnitByFlatIndex(idx);
-    initCarousel(el.querySelector(".carousel"));
-    initVersionSwitcher(el);
-    el.querySelector(".carousel-expand").addEventListener("click", () => openModalFromUnit(el));
-  });
-  document.querySelectorAll(".field-head").forEach(observeReveal);
-}
-
-function findUnitByFlatIndex(idx) {
-  let i = 0;
+// ---------- Field lookup helpers (shared across pages) ----------
+function findFieldByCategory(cat) { return FIELDS.find(f => f.category === cat) || null; }
+function findUnitById(id) {
   for (const field of FIELDS) {
-    for (const unit of field.units) {
-      if (i === idx) return unit;
-      i++;
-    }
+    const unit = field.units.find(u => u.id === id);
+    if (unit) return { unit, field };
   }
   return null;
 }
-
-// ---------- Carousel behavior ----------
-function initCarousel(carouselEl) {
-  if (!carouselEl) return;
-  const track = carouselEl.querySelector(".carousel-track");
-  const prev = carouselEl.querySelector(".carousel-prev");
-  const next = carouselEl.querySelector(".carousel-next");
-  const dots = carouselEl.querySelectorAll(".carousel-dot");
-
-  function slideWidth() { return track.clientWidth; }
-  function goTo(i) { track.scrollTo({ left: i * slideWidth(), behavior: "smooth" }); }
-  function currentIndex() { return Math.round(track.scrollLeft / Math.max(1, slideWidth())); }
-
-  if (prev) prev.addEventListener("click", (e) => { e.stopPropagation(); goTo(Math.max(0, currentIndex() - 1)); });
-  if (next) next.addEventListener("click", (e) => { e.stopPropagation(); goTo(currentIndex() + 1); });
-  dots.forEach(dot => dot.addEventListener("click", (e) => { e.stopPropagation(); goTo(Number(dot.dataset.index)); }));
-
-  let scrollTimeout;
-  track.addEventListener("scroll", () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      const i = currentIndex();
-      dots.forEach((d, di) => d.classList.toggle("is-active", di === i));
-    }, 80);
-  });
+function flatUnitList() {
+  const out = [];
+  FIELDS.forEach(field => field.units.forEach(unit => out.push({ unit, field })));
+  return out;
 }
-
-function rebuildCarousel(carouselEl, images) {
-  carouselEl.innerHTML = `
-    <div class="carousel-track">
-      ${images.map(im => `
-        <div class="carousel-slide kind-${im.kind}"><img src="${im.file}" alt="" loading="lazy"></div>
-      `).join("")}
-    </div>
-    ${images.length > 1 ? `
-      <button class="carousel-arrow carousel-prev" aria-label="Previous image">&larr;</button>
-      <button class="carousel-arrow carousel-next" aria-label="Next image">&rarr;</button>
-      <div class="carousel-dots">
-        ${images.map((_, i) => `<button class="carousel-dot ${i === 0 ? "is-active" : ""}" data-index="${i}" aria-label="Image ${i + 1}"></button>`).join("")}
-      </div>
-    ` : ""}
-    <button class="carousel-expand" aria-label="View full size">${EXPAND_ICON}</button>
-  `;
-  initCarousel(carouselEl);
-  return carouselEl.querySelector(".carousel-expand");
-}
-
-// ---------- Version switcher behavior ----------
-function initVersionSwitcher(unitEl) {
-  const switcher = unitEl.querySelector(".version-switcher");
-  if (!switcher) return;
-  const unit = unitEl._unitData;
-  switcher.addEventListener("click", (e) => {
-    const btn = e.target.closest(".version-btn");
-    if (!btn) return;
-    switcher.querySelectorAll(".version-btn").forEach(b => b.classList.remove("is-active"));
-    btn.classList.add("is-active");
-    const vi = Number(btn.dataset.vindex);
-    const v = unit.versions[vi];
-    unitEl._activeVersion = vi;
-
-    unitEl.querySelector(".case-desc").textContent = v.desc;
-    unitEl.querySelector(".case-highlights").innerHTML = v.highlights.map(h => `<li>${h}</li>`).join("");
-    const carouselEl = unitEl.querySelector(".carousel");
-    const expandBtn = rebuildCarousel(carouselEl, v.images);
-    expandBtn.addEventListener("click", () => openModalFromUnit(unitEl));
-  });
-}
-
-renderFields();
-
-// ---------- Modal (full-size lightbox) ----------
-const modal = document.getElementById("project-modal");
-const modalImg = document.getElementById("modal-img");
-const modalCategory = document.getElementById("modal-category");
-const modalTitle = document.getElementById("modal-title");
-const modalDesc = document.getElementById("modal-desc");
-const modalHighlights = document.getElementById("modal-highlights");
-const modalPrev = document.getElementById("modal-prev");
-const modalNext = document.getElementById("modal-next");
-const modalCounter = document.getElementById("modal-counter");
-
-let activeImages = [];
-let activeImageIndex = 0;
-let activeMeta = null;
-
-function renderModalImage() {
-  modalImg.src = activeImages[activeImageIndex].file;
-  modalImg.alt = `${activeMeta.title} — image ${activeImageIndex + 1} of ${activeImages.length}`;
-  const multi = activeImages.length > 1;
-  modalPrev.style.display = multi ? "flex" : "none";
-  modalNext.style.display = multi ? "flex" : "none";
-  modalCounter.style.display = multi ? "block" : "none";
-  modalCounter.textContent = `${activeImageIndex + 1} / ${activeImages.length}`;
-}
-
-function openModalFromUnit(unitEl) {
-  const unit = unitEl._unitData;
-  const vi = unitEl._activeVersion || 0;
-  const v = unit.versions[vi];
-  activeImages = v.images;
-  activeImageIndex = 0;
-  activeMeta = { title: v.title, category: unit.categoryLabel, desc: v.desc, highlights: v.highlights };
-  modalCategory.textContent = unit.categoryLabel;
-  modalTitle.textContent = v.title;
-  modalDesc.textContent = v.desc;
-  modalHighlights.innerHTML = v.highlights.map(h => `<li>${h}</li>`).join("");
-  renderModalImage();
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-lock");
-}
-
-function closeModal() {
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-lock");
-}
-function showPrevImage() { activeImageIndex = (activeImageIndex - 1 + activeImages.length) % activeImages.length; renderModalImage(); }
-function showNextImage() { activeImageIndex = (activeImageIndex + 1) % activeImages.length; renderModalImage(); }
-
-document.getElementById("modal-close").addEventListener("click", closeModal);
-document.getElementById("modal-backdrop").addEventListener("click", closeModal);
-modalPrev.addEventListener("click", showPrevImage);
-modalNext.addEventListener("click", showNextImage);
-document.addEventListener("keydown", (e) => {
-  if (!modal.classList.contains("is-open")) return;
-  if (e.key === "Escape") closeModal();
-  if (e.key === "ArrowLeft") showPrevImage();
-  if (e.key === "ArrowRight") showNextImage();
-});
-
-// ---------- Mobile nav ----------
-const navToggle = document.getElementById("nav-toggle");
-const mainNav = document.getElementById("main-nav");
-navToggle.addEventListener("click", () => {
-  const open = mainNav.classList.toggle("is-open");
-  navToggle.setAttribute("aria-expanded", open ? "true" : "false");
-});
-mainNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
-  mainNav.classList.remove("is-open");
-  navToggle.setAttribute("aria-expanded", "false");
-}));
-
-document.querySelectorAll(".reveal").forEach(observeReveal);
-
-// ---------- Footer year ----------
-document.getElementById("year").textContent = new Date().getFullYear();
