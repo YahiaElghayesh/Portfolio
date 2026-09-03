@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yahia Elghayesh — Product Design &amp; Hardware Engineering</title>
-<meta name="description" content="Yahia Elghayesh — Product design and hardware engineering. Twenty case studies across medical devices, telecom field hardware, environmental monitoring, and robotics: identifying problems, designing, prototyping, manufacturing, and deploying fully realized products.">
+<meta name="description" content="Yahia Elghayesh — Product design and hardware engineering. Case studies across medical devices, telecom field hardware, environmental monitoring, and robotics: identifying problems, designing, prototyping, manufacturing, and deploying fully realized products.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -52,7 +52,7 @@
     <div class="hero-stats">
       <div class="container stats-row">
         <div class="stat"><span class="stat-num">40+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
-        <div class="stat"><span class="stat-num">20</span><span class="stat-label">Case studies across 5 sectors</span></div>
+        <div class="stat"><span class="stat-num">15</span><span class="stat-label">Case studies across 5 sectors</span></div>
         <div class="stat"><span class="stat-num">CSWP</span><span class="stat-label">Certified SOLIDWORKS Professional</span></div>
       </div>
     </div>
@@ -106,26 +106,28 @@
     </div>
   </section>
 
+  <!-- PARTNERS / COLLABORATIONS -->
+  <section id="partners" class="section partners-section">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Collaborations</p>
+        <h2>Who I&rsquo;ve worked with</h2>
+      </div>
+      <div class="partners-row" id="partners-row"><!-- injected by script.js --></div>
+    </div>
+  </section>
+
   <!-- WORK -->
   <section id="work" class="section work-section">
     <div class="container">
       <div class="section-head reveal">
         <p class="eyebrow">Selected Work</p>
-        <h2>20 case studies, 5 sectors</h2>
+        <h2>Case studies by field</h2>
         <p class="section-sub">From a manufacturable stereotactic neurosurgery frame to autonomous minesweeping robots — every project below went from problem to physical, deployed product.</p>
-      </div>
-
-      <div class="filter-bar reveal" id="filter-bar" role="tablist" aria-label="Filter case studies by category">
-        <button class="filter-btn is-active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="medical">Medical Devices</button>
-        <button class="filter-btn" data-filter="telecom">Telecom Testing</button>
-        <button class="filter-btn" data-filter="automation">Automation &amp; Robotics</button>
-        <button class="filter-btn" data-filter="environmental">Environmental &amp; Agri-Tech</button>
-        <button class="filter-btn" data-filter="research">Research</button>
       </div>
     </div>
 
-    <div id="case-studies"><!-- injected by script.js --></div>
+    <div id="fields"><!-- injected by script.js --></div>
   </section>
 
   <!-- CONTACT -->
@@ -162,7 +164,7 @@
   </div>
 </footer>
 
-<!-- PROJECT GALLERY MODAL -->
+<!-- PROJECT GALLERY MODAL (full-size lightbox) -->
 <div class="modal" id="project-modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal-backdrop" id="modal-backdrop"></div>
   <div class="modal-panel">
@@ -179,7 +181,6 @@
       <p class="modal-desc" id="modal-desc"></p>
       <h4>Highlights</h4>
       <ul class="modal-highlights" id="modal-highlights"></ul>
-      <div class="modal-thumbs" id="modal-thumbs"></div>
     </div>
   </div>
 </div>
