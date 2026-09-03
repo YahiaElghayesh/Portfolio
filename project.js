@@ -19,78 +19,88 @@ if (!found) {
   renderProject(found.unit, found.field, 0);
 }
 
-function splitEvenly(arr, n) {
-  const out = [];
-  const base = Math.floor(arr.length / n);
-  let rem = arr.length % n;
-  let i = 0;
-  for (let b = 0; b < n; b++) {
-    const take = base + (rem > 0 ? 1 : 0);
-    if (rem > 0) rem--;
-    out.push(arr.slice(i, i + take));
-    i += take;
-  }
-  return out;
-}
-
 function pickHero(images) {
   const nonCutout = images.find(im => im.kind !== "cutout");
   return nonCutout || images[0];
 }
 
+// ---------- Block renderers: each project supplies its own sequence of these ----------
+function figHTML(im, idx, extraClass) {
+  return `
+    <figure class="${extraClass || ""} kind-${im.kind}" data-img-index="${idx}">
+      <img src="${im.file}" alt="" loading="lazy">
+    </figure>
+  `;
+}
+
+function highlightsHTML(highlights, indices) {
+  return `<ul class="detail-highlights">${indices.map(i => `<li>${highlights[i]}</li>`).join("")}</ul>`;
+}
+
+function renderBlock(block, images, highlights, blockIndex) {
+  if (block.type === "wide") {
+    const im = images[block.images[0]];
+    return `
+      <figure class="layout-wide reveal ${im.kind === "cutout" ? "kind-cutout" : ""}" data-img-index="${block.images[0]}">
+        <img src="${im.file}" alt="" loading="lazy">
+        ${block.caption ? `<figcaption>${block.caption}</figcaption>` : ""}
+      </figure>
+    `;
+  }
+  if (block.type === "pair") {
+    return `
+      <div class="layout-pair reveal">
+        <div class="layout-pair-media">
+          ${block.images.map(i => figHTML(images[i], i, "pair-fig")).join("")}
+        </div>
+        ${highlightsHTML(highlights, block.highlights)}
+      </div>
+    `;
+  }
+  if (block.type === "inset") {
+    return `
+      <div class="layout-inset side-${block.side} reveal">
+        ${figHTML(images[block.images[0]], block.images[0], "inset-fig")}
+        <div class="inset-text">
+          <span class="inset-label">Detail</span>
+          ${highlightsHTML(highlights, block.highlights)}
+        </div>
+      </div>
+    `;
+  }
+  if (block.type === "mosaic3") {
+    return `
+      <div class="layout-mosaic3 reveal">
+        <div class="mosaic3-media">
+          ${block.images.map(i => figHTML(images[i], i, "mosaic3-fig")).join("")}
+        </div>
+        ${highlightsHTML(highlights, block.highlights)}
+      </div>
+    `;
+  }
+  if (block.type === "stat") {
+    return `
+      <div class="layout-stat reveal">
+        <p>${highlights[block.highlight]}</p>
+      </div>
+    `;
+  }
+  // text
+  return highlightsHTML(highlights, block.highlights).replace('class="detail-highlights"', 'class="detail-highlights detail-highlights-plain reveal"');
+}
+
 function renderProject(unit, field, versionIndex) {
   const v = unit.versions[versionIndex];
   const hasVersions = unit.versions.length > 1;
-  const hero = pickHero(v.images);
-  const rest = v.images.filter(im => im !== hero);
+  const layout = getLayout(unit.id, v.versionLabel);
+  const hero = layout ? v.images[layout.hero] : pickHero(v.images);
+  const heroIndex = v.images.indexOf(hero);
 
   let blocksHTML = "";
-  let galleryHTML = "";
-
-  if (v.highlights.length > 0 && rest.length > 0) {
-    const numBlocks = Math.min(rest.length, v.highlights.length);
-    const blockImages = rest.slice(0, numBlocks);
-    const galleryImages = rest.slice(numBlocks);
-    const highlightGroups = splitEvenly(v.highlights, numBlocks);
-
-    blocksHTML = blockImages.map((im, i) => `
-      <div class="detail-block ${i % 2 === 1 ? "is-reversed" : ""} reveal">
-        <figure class="detail-media kind-${im.kind}" data-img-index="${v.images.indexOf(im)}">
-          <img src="${im.file}" alt="" loading="lazy">
-        </figure>
-        <ul class="detail-highlights">
-          ${highlightGroups[i].map(h => `<li>${h}</li>`).join("")}
-        </ul>
-      </div>
-    `).join("");
-
-    if (galleryImages.length) {
-      galleryHTML = `
-        <div class="detail-gallery reveal">
-          ${galleryImages.map(im => `
-            <figure class="gallery-thumb kind-${im.kind}" data-img-index="${v.images.indexOf(im)}">
-              <img src="${im.file}" alt="" loading="lazy">
-            </figure>
-          `).join("")}
-        </div>
-      `;
-    }
+  if (layout) {
+    blocksHTML = layout.blocks.map(b => renderBlock(b, v.images, v.highlights)).join("");
   } else if (v.highlights.length > 0) {
-    blocksHTML = `
-      <ul class="detail-highlights detail-highlights-plain reveal">
-        ${v.highlights.map(h => `<li>${h}</li>`).join("")}
-      </ul>
-    `;
-  } else if (rest.length > 0) {
-    galleryHTML = `
-      <div class="detail-gallery reveal">
-        ${rest.map(im => `
-          <figure class="gallery-thumb kind-${im.kind}" data-img-index="${v.images.indexOf(im)}">
-            <img src="${im.file}" alt="" loading="lazy">
-          </figure>
-        `).join("")}
-      </div>
-    `;
+    blocksHTML = `<ul class="detail-highlights detail-highlights-plain reveal">${v.highlights.map(h => `<li>${h}</li>`).join("")}</ul>`;
   }
 
   const flat = flatUnitList();
@@ -118,14 +128,13 @@ function renderProject(unit, field, versionIndex) {
       </div>
     </header>
 
-    <figure class="project-hero reveal kind-${hero.kind}" data-img-index="${v.images.indexOf(hero)}">
+    <figure class="project-hero reveal kind-${hero.kind}" data-img-index="${heroIndex}">
       <img src="${hero.file}" alt="" loading="lazy">
     </figure>
 
     <div class="container project-body">
       <p class="project-lead reveal">${v.desc}</p>
       ${blocksHTML}
-      ${galleryHTML}
     </div>
 
     <nav class="project-pager reveal">

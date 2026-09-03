@@ -55,6 +55,118 @@ const CERTS = [
 
 const EXPAND_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H4a1 1 0 0 0-1 1v4M16 3h4a1 1 0 0 1 1 1v4M8 21H4a1 1 0 0 1-1-1v-4M16 21h4a1 1 0 0 0 1-1v-4"/></svg>`;
 
+// ---------- Per-project editorial layouts ----------
+// Hand-set from a full visual audit of every photo: which shot is a true
+// whole-part overview (used as hero — never a close-up/detail crop), which
+// are close-up details of one feature, and which are real deployment/context
+// shots. Each unit (or each version, for multi-version units) gets its own
+// block sequence built from the photos it actually has, so no two projects
+// share the same rhythm of photos vs. text.
+//
+// Block types:
+//  wide    — full-width secondary photo with a small caption, no bullets
+//  pair    — two photos side by side, paired with 1+ highlights
+//  inset   — one smaller "detail" photo to one side, paired with highlights
+//  mosaic3 — three small photos in a row, paired with highlights
+//  stat    — one highlight pulled out as a large editorial statistic
+//  text    — plain highlight bullets, no photo
+const LAYOUTS = {
+  "neurosurgery-frame": { hero: 0, blocks: [
+    { type: "stat", highlight: 0 },
+    { type: "text", highlights: [1, 2, 3, 4, 5] },
+  ]},
+  "skycare-kit": { hero: 0, blocks: [
+    { type: "pair", images: [1, 2], highlights: [0, 1] },
+    { type: "pair", images: [3, 4], highlights: [2, 3] },
+  ]},
+  "smart-mirror": { hero: 2, blocks: [
+    { type: "inset", side: "left", images: [0], highlights: [0, 1] },
+    { type: "inset", side: "right", images: [1], highlights: [2, 3] },
+  ]},
+  "inos-watcher": {
+    V3: { hero: 0, blocks: [
+      { type: "wide", images: [1], caption: "Wall-mounted in the field" },
+      { type: "pair", images: [2, 3], highlights: [0] },
+      { type: "inset", side: "right", images: [5], highlights: [1, 2] },
+      { type: "inset", side: "left", images: [4], highlights: [3, 4] },
+    ]},
+    V2: { hero: 0, blocks: [
+      { type: "pair", images: [1, 2], highlights: [0, 1, 2] },
+    ]},
+    V1: { hero: 0, blocks: [
+      { type: "pair", images: [1, 2], highlights: [0, 1, 2, 3] },
+    ]},
+  },
+  "inos-lite": {
+    V2: { hero: 0, blocks: [
+      { type: "wide", images: [3], caption: "Packed and ready to deploy" },
+      { type: "pair", images: [1, 2], highlights: [0, 1, 2] },
+      { type: "text", highlights: [3, 4] },
+    ]},
+    V1: { hero: 0, blocks: [
+      { type: "pair", images: [1, 2], highlights: [0, 1, 2] },
+    ]},
+  },
+  "inos-air": { hero: 1, blocks: [
+    { type: "pair", images: [3, 4], highlights: [0] },
+    { type: "pair", images: [0, 2], highlights: [1] },
+  ]},
+  "inos-gauge": {
+    V3: { hero: 0, blocks: [
+      { type: "pair", images: [1, 2], highlights: [0, 1] },
+      { type: "wide", images: [3], caption: "Full 16-phone configuration" },
+      { type: "inset", side: "left", images: [4], highlights: [2, 3, 4] },
+    ]},
+    V2: { hero: 1, blocks: [
+      { type: "wide", images: [0], caption: "In-vehicle deployment" },
+      { type: "pair", images: [2, 3], highlights: [0, 1] },
+      { type: "inset", side: "right", images: [4], highlights: [2, 3] },
+    ]},
+    V1: { hero: 0, blocks: [
+      { type: "pair", images: [1, 2], highlights: [0, 1, 2, 3] },
+    ]},
+  },
+  "long-range-benchmark": { hero: 0, blocks: [
+    { type: "text", highlights: [0, 1, 2] },
+  ]},
+  "general-benchmark": { hero: 1, blocks: [
+    { type: "wide", images: [0], caption: "Prototype build" },
+    { type: "text", highlights: [0, 1, 2] },
+  ]},
+  "ophthalmic-cell": { hero: 3, blocks: [
+    { type: "pair", images: [0, 1], highlights: [0, 1] },
+    { type: "inset", side: "left", images: [2], highlights: [2, 3, 4] },
+  ]},
+  "minesweeping-robot": { hero: 1, blocks: [
+    { type: "wide", images: [0], caption: "International Robotic Competition on Humanitarian Demining" },
+    { type: "text", highlights: [0, 1] },
+    { type: "wide", images: [2], caption: "2nd place, Zewail City, 2016" },
+    { type: "text", highlights: [2, 3, 4] },
+  ]},
+  "water-quality-sonde": { hero: 2, blocks: [
+    { type: "pair", images: [0, 1], highlights: [0, 1, 2] },
+  ]},
+  "rain-monitoring": { hero: 3, blocks: [
+    { type: "mosaic3", images: [0, 1, 2], highlights: [0, 1] },
+    { type: "pair", images: [4, 5], highlights: [2, 3] },
+  ]},
+  "exhaust-gas-sampler": { hero: 0, blocks: [
+    { type: "wide", images: [1], caption: "Rear panel — power, data, and sensor connectors" },
+    { type: "text", highlights: [0, 1, 2, 3] },
+  ]},
+  "gpr": { hero: 4, blocks: [
+    { type: "wide", images: [3], caption: "Assembled electronics" },
+    { type: "mosaic3", images: [0, 1, 2], highlights: [0, 1, 2, 3] },
+  ]},
+};
+
+function getLayout(unitId, versionLabel) {
+  const entry = LAYOUTS[unitId];
+  if (!entry) return null;
+  if (entry.hero !== undefined) return entry;
+  return entry[versionLabel] || null;
+}
+
 // ---------- Field lookup helpers (shared across pages) ----------
 function findFieldByCategory(cat) { return FIELDS.find(f => f.category === cat) || null; }
 function findUnitById(id) {
