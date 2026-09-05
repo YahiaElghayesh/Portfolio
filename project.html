@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Yahia Elghayesh</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header" id="top">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">Yahia Elghayesh</a>
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html#about">About</a>
+      <a href="index.html#toolbox">Toolbox</a>
+      <a href="work.html" class="is-current">Work</a>
+      <a href="index.html#contact" class="nav-cta">Contact</a>
+    </nav>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="project-root"><!-- injected by project.js --></main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>&copy; <span id="year"></span> Yahia Elghayesh. All projects and imagery shown are original work.</p>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</footer>
+
+<!-- LIGHTBOX MODAL -->
+<div class="modal" id="project-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-panel">
+    <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+    <div class="modal-media">
+      <img id="modal-img" src="" alt="">
+      <button class="modal-nav modal-prev" id="modal-prev" aria-label="Previous image">&larr;</button>
+      <button class="modal-nav modal-next" id="modal-next" aria-label="Next image">&rarr;</button>
+      <span class="modal-counter" id="modal-counter"></span>
+    </div>
+    <div class="modal-body">
+      <p class="modal-category" id="modal-category"></p>
+      <h3 id="modal-title"></h3>
+      <p class="modal-desc" id="modal-desc"></p>
+      <ul class="modal-highlights" id="modal-highlights"></ul>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="project.js"></script>
+</body>
+</html>
