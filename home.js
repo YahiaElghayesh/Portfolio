@@ -48,7 +48,7 @@ observeRevealAll(".strip-item");
 const fieldsTeaser = document.getElementById("fields-teaser");
 if (fieldsTeaser) {
   fieldsTeaser.innerHTML = FIELDS.map(field => {
-    const thumb = field.units[0].versions[0].images[0];
+    const thumb = getHeroImage(field.units[0], 0);
     return `
     <a class="field-teaser-card reveal" href="work.html#${field.category}">
       <span class="field-teaser-media kind-${thumb.kind}"><img src="${thumb.file}" alt="" loading="lazy"></span>

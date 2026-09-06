@@ -24,7 +24,7 @@ const TOOLBOX = [
   { name: "CAD", tools: [
       { name: "SOLIDWORKS", logo: "assets/img/logos/dassaultsystemes.svg" },
       { name: "Blender", logo: "assets/img/logos/blender.svg" },
-      { name: "Fusion 360", logo: null },
+      { name: "Fusion 360", logo: "assets/img/logos/autodesk.svg" },
       { name: "AutoCAD", logo: "assets/img/logos/autocad.svg" },
     ], detail: "Modeling, Assembly, Simulation, Surfacing, Weldments, Sheet Metal, Drawings" },
   { name: "Electronics & PCB Design", tools: [
@@ -34,10 +34,13 @@ const TOOLBOX = [
       { name: "Arduino", logo: "assets/img/logos/arduino.svg" },
     ], detail: "" },
   { name: "Visualization & Documentation", tools: [
-      { name: "SOLIDWORKS Visualize", logo: "assets/img/logos/dassaultsystemes.svg" },
-      { name: "SOLIDWORKS Composer", logo: "assets/img/logos/dassaultsystemes.svg" },
-      { name: "Adobe Creative Suite", logo: null },
-      { name: "Microsoft Office Suite", logo: null },
+      // No sourced icon for these two SOLIDWORKS sub-products specifically (distinct from
+      // the base SOLIDWORKS mark used above) — falls back to a monogram rather than
+      // reusing the wrong logo. Swap in the real ones if/when available.
+      { name: "SOLIDWORKS Visualize", logo: null },
+      { name: "SOLIDWORKS Composer", logo: null },
+      { name: "Adobe Creative Suite", logo: "assets/img/logos/adobe-a.svg" },
+      { name: "Microsoft Office Suite", logo: "assets/img/logos/microsoft.svg" },
     ], detail: "" },
 ];
 
@@ -204,6 +207,19 @@ function getLayout(unitId, versionLabel) {
   if (!entry) return null;
   if (entry.hero !== undefined) return entry;
   return entry[versionLabel] || null;
+}
+
+// Picks the deliberate hero/main shot for a unit's version — the same photo used
+// as the project-page hero — so thumbnails everywhere (work index, home teaser)
+// never fall back to whatever happened to be first in the folder.
+function pickHero(images) {
+  const nonCutout = images.find(im => im.kind !== "cutout");
+  return nonCutout || images[0];
+}
+function getHeroImage(unit, versionIndex) {
+  const v = unit.versions[versionIndex || 0];
+  const layout = getLayout(unit.id, v.versionLabel);
+  return layout ? v.images[layout.hero] : pickHero(v.images);
 }
 
 // ---------- Field lookup helpers (shared across pages) ----------

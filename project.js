@@ -19,11 +19,6 @@ if (!found) {
   renderProject(found.unit, found.field, 0);
 }
 
-function pickHero(images) {
-  const nonCutout = images.find(im => im.kind !== "cutout");
-  return nonCutout || images[0];
-}
-
 // ---------- Block renderers: each project supplies its own sequence of these ----------
 function figHTML(im, idx, extraClass) {
   return `
@@ -142,7 +137,7 @@ function renderProject(unit, field, versionIndex) {
   const hasVersions = unit.versions.length > 1;
   const layout = getLayout(unit.id, v.versionLabel);
   const fieldIndex = field.units.findIndex(u => u.id === unit.id);
-  const hero = layout ? v.images[layout.hero] : pickHero(v.images);
+  const hero = getHeroImage(unit, versionIndex);
   const heroIndex = v.images.indexOf(hero);
 
   let blocksHTML = "";

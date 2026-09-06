@@ -17,7 +17,7 @@ fieldsEl.innerHTML = FIELDS.map(field => `
     <div class="work-rows">
       ${field.units.map((unit, i) => {
         const v0 = unit.versions[0];
-        const thumb = v0.images[0];
+        const thumb = getHeroImage(unit, 0);
         const hasVersions = unit.versions.length > 1;
         const tags = [hasVersions ? `${unit.versions.length} versions` : "Delivered", ...(PROJECT_TAGS[unit.id] || [])];
         const aspect = ASPECTS[i % ASPECTS.length];
