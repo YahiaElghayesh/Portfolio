@@ -1,0 +1,650 @@
+{
+  "assets/img/projects/exhaust-gas-sampler/overview-of-device-from-back-left.webp": {
+    "project": "exhaust-gas-sampler",
+    "description": "overview of device from back left no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/exhaust-gas-sampler/overview-of-device-from-front-right.webp": {
+    "project": "exhaust-gas-sampler",
+    "description": "overview of device from front right no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-air/closeup-on-device-and-mounting-bracket-on-drone.webp": {
+    "project": "inos-air",
+    "description": "closeup on device and mounting bracket on drone no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-air/closeup-on-device-mounting-bracket-on-drone.webp": {
+    "project": "inos-air",
+    "description": "closeup on device mounting bracket on drone no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-air/explode-view-fro-device.webp": {
+    "project": "inos-air",
+    "description": "explode view fro device no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-air/overview-slight-right-slight-top-device-and-drone-together.webp": {
+    "project": "inos-air",
+    "description": "overview slight right slight top no background device and drone together",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-air/overview-slight-right-slight-top-device-only.webp": {
+    "project": "inos-air",
+    "description": "overview slight right slight top no background device only",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/general-benchmark/closup-with-white-background.webp": {
+    "project": "general-benchmark",
+    "description": "closup with white background",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/general-benchmark/overview-with-white-background.webp": {
+    "project": "general-benchmark",
+    "description": "overview with white background",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/gpr/antenna-pcb-render.webp": {
+    "project": "gpr",
+    "description": "antenna pcb render",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/gpr/first-pcb-render.webp": {
+    "project": "gpr",
+    "description": "first pcb render",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/gpr/overvie-from-to-back-righ-of-devce-assembled-and-with-antenna.webp": {
+    "project": "gpr",
+    "description": "overvie from to back righ of devce assembled and with antenna no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/gpr/overvie-of-device-only-without-antenna-from-top-righ.webp": {
+    "project": "gpr",
+    "description": "overvie of device only without antenna from top righ no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/gpr/second-pcb-render.webp": {
+    "project": "gpr",
+    "description": "second pcb render",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/minesweeping-robot/me-behind-2-robots-on-ground.webp": {
+    "project": "minesweeping-robot",
+    "description": "me behind 2 robots on ground",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/minesweeping-robot/me-behind-robot-on-ground.webp": {
+    "project": "minesweeping-robot",
+    "description": "me behind robot on ground",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/minesweeping-robot/me-holding-robot.webp": {
+    "project": "minesweeping-robot",
+    "description": "me holding robot",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/water-quality-sonde/overview-of-device-from-back-no-cover.webp": {
+    "project": "water-quality-sonde",
+    "description": "overview of device from back no cover no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/water-quality-sonde/overview-of-device-from-front-no-cobver-so-because-everything-is-visiv.webp": {
+    "project": "water-quality-sonde",
+    "description": "overview of device from front no cobver so use as main because everything is visivle no background",
+    "kind": "cutout",
+    "use_as_main": true,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/water-quality-sonde/overview-of-device-with-protective-cover.webp": {
+    "project": "water-quality-sonde",
+    "description": "overview of device with protective cover no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v1/exploded-view-from-top-right-front.webp": {
+    "project": "inos-watcher-v1",
+    "description": "exploded view from top right front",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v1/overview-from-front-left.webp": {
+    "project": "inos-watcher-v1",
+    "description": "overview from front left no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v1/overview-from-front-top-right.webp": {
+    "project": "inos-watcher-v1",
+    "description": "overview from front top right no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v2/closeup-from-front-right-top-while-its-open.webp": {
+    "project": "inos-watcher-v2",
+    "description": "closeup from front right top while its open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v2/overview-from-from-left-top-whilet-its-open.webp": {
+    "project": "inos-watcher-v2",
+    "description": "overview from from left top whilet its open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v2/overview-from-left-top-front-while-closed.webp": {
+    "project": "inos-watcher-v2",
+    "description": "overview from left top front while closed no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v2/overview-from-top-while-device-is-open.webp": {
+    "project": "inos-watcher-v2",
+    "description": "overview from top while device is open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v1/closeup-photo-from-top-front-right-while-its-open-that-you.webp": {
+    "project": "inos-gauge-v1",
+    "description": "closeup photo from top front right while its open with background that you should remove",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": true
+  },
+  "assets/img/projects/inos-gauge-v1/closup-photo-from-left-while-its-open-that-you.webp": {
+    "project": "inos-gauge-v1",
+    "description": "closup photo from left while its open with background that you should remove",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": true
+  },
+  "assets/img/projects/inos-gauge-v1/overview-photo-from-top-front-left-while-its-open-that-you.webp": {
+    "project": "inos-gauge-v1",
+    "description": "overview photo from top front left while its open with background that you should remove",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": true
+  },
+  "assets/img/projects/inos-gauge-v2/closeup-from-front-left-bag-open.webp": {
+    "project": "inos-gauge-v2",
+    "description": "closeup from front left bag open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v2/closup-from-front-top-bag-open.webp": {
+    "project": "inos-gauge-v2",
+    "description": "closup from front top bag open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v2/device-inside-car.webp": {
+    "project": "inos-gauge-v2",
+    "description": "device inside car no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v2/overview-from-front-righ-for-bag-closed-and-in-transit-on-its-wheels-a.webp": {
+    "project": "inos-gauge-v2",
+    "description": "overview from front righ for bag closed and in transit on its wheels and handles expanded for transport no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v2/overview-from-top-front-left-whilte-its-open.webp": {
+    "project": "inos-gauge-v2",
+    "description": "overview from top front left whilte its open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/closeup-of-2-devices-from-front-with-background.webp": {
+    "project": "rain-monitoring",
+    "description": "closeup of 2 devices from front with  background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/closeup-of-esissions-devicesfrom-front-with-background.webp": {
+    "project": "rain-monitoring",
+    "description": "closeup of esissions devicesfrom front with  background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/closeup-on-rain-sensor-and-solar-cell-from-back.webp": {
+    "project": "rain-monitoring",
+    "description": "closeup on rain sensor and solar cell from back  no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/closeup-on-rain-sensor-and-solar-cell-from-front.webp": {
+    "project": "rain-monitoring",
+    "description": "closeup on rain sensor and solar cell from front  no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/overview-of-2-devices-from-front.webp": {
+    "project": "rain-monitoring",
+    "description": "overview of 2 devices from front no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/overview-of-rain-device-from-front.webp": {
+    "project": "rain-monitoring",
+    "description": "overview of rain device from front no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/rain-monitoring/overview-of-remmisions-device-from-front.webp": {
+    "project": "rain-monitoring",
+    "description": "overview of remmisions device from front no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/skycare-kit/overivew-top-front-device-closed.webp": {
+    "project": "skycare-kit",
+    "description": "overivew top front device closed no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/skycare-kit/overvie-top-front-left-device-closed.webp": {
+    "project": "skycare-kit",
+    "description": "overvie top front left device closed no background ",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/skycare-kit/overview-of-device-open-top-front.webp": {
+    "project": "skycare-kit",
+    "description": "overview of device open top  front no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/skycare-kit/overview-of-device-open-top.webp": {
+    "project": "skycare-kit",
+    "description": "overview of device open top no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/skycare-kit/overview-of-device-open-top-right-front.webp": {
+    "project": "skycare-kit",
+    "description": "overview of device open top right front no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/neurosurgery-frame/closeup.webp": {
+    "project": "neurosurgery-frame",
+    "description": "closeup no background (2)",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/neurosurgery-frame/closeup-2.webp": {
+    "project": "neurosurgery-frame",
+    "description": "closeup no background (3)",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/neurosurgery-frame/closeup-3.webp": {
+    "project": "neurosurgery-frame",
+    "description": "closeup no background (4)",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/neurosurgery-frame/closeup-4.webp": {
+    "project": "neurosurgery-frame",
+    "description": "closeup no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/neurosurgery-frame/overview-top-front-right.webp": {
+    "project": "neurosurgery-frame",
+    "description": "overview top front right no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/neurosurgery-frame/overview-top.webp": {
+    "project": "neurosurgery-frame",
+    "description": "overview top no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/ophthalmic-cell/closeup-on-cobots-from-another-direction.webp": {
+    "project": "ophthalmic-cell",
+    "description": "closeup on cobots from another direction with background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/ophthalmic-cell/closeup-on-cobots.webp": {
+    "project": "ophthalmic-cell",
+    "description": "closeup on cobots with background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/ophthalmic-cell/closeup-on-trays.webp": {
+    "project": "ophthalmic-cell",
+    "description": "closeup on trays with background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/ophthalmic-cell/overview-of-cell-from-slight-left-and-slight-up.webp": {
+    "project": "ophthalmic-cell",
+    "description": "overview of cell from slight left and slight up with background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v1/me-from-back-left-wearing-the-bag-in-operation.webp": {
+    "project": "inos-lite-v1",
+    "description": "me from back left wearing the bag in operation no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v1/overvie-of-bag-from-front-left-whileits-closed.webp": {
+    "project": "inos-lite-v1",
+    "description": "overvie of bag from front left whileits closed no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v1/overvie-of-bag-from-front-left-whileits-open.webp": {
+    "project": "inos-lite-v1",
+    "description": "overvie of bag from front left whileits open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v2/me-from-back-right-wearing-the-bag-in-operation.webp": {
+    "project": "inos-lite-v2",
+    "description": "me from back right wearing the bag in operation no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v2/me-from-front-left-wearing-the-bag-in-operation.webp": {
+    "project": "inos-lite-v2",
+    "description": "me from front left wearing the bag in operation no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v2/overvie-of-bag-from-front-while-its-closed.webp": {
+    "project": "inos-lite-v2",
+    "description": "overvie of bag from front while its closed no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-lite-v2/overvie-of-bag-from-front-while-its-open.webp": {
+    "project": "inos-lite-v2",
+    "description": "overvie of bag from front while its open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/long-range-benchmark/overiew-but-its-cut-and-that-you.webp": {
+    "project": "long-range-benchmark",
+    "description": "overiew but its cut and with background that you should remove",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": true
+  },
+  "assets/img/projects/smart-mirror/closeup-of-device-from-forwardwith-storage-open.webp": {
+    "project": "smart-mirror",
+    "description": "closeup of device from forwardwith storage open no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/smart-mirror/closeup-of-device-with-storage-closed.webp": {
+    "project": "smart-mirror",
+    "description": "closeup of device with storage closed no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/smart-mirror/overview-of-mirror-with-storage-closed.webp": {
+    "project": "smart-mirror",
+    "description": "overview of mirror with storage closed no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/closup-on-fans-while-other-components-as-transparent-to-show-fans.webp": {
+    "project": "inos-watcher-v3",
+    "description": "closup on fans while other components as transparent to show fans",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/overview-for-device-from-front-on-concrete-wall-but-from-more-far.webp": {
+    "project": "inos-watcher-v3",
+    "description": "overview for device from front on concrete wall but from more far",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/overview-for-device-from-front-on-concrete-wall-but.webp": {
+    "project": "inos-watcher-v3",
+    "description": "overview for device from front on concrete wall but no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/overview-for-device-from-front-on-concrete-wall.webp": {
+    "project": "inos-watcher-v3",
+    "description": "overview for device from front on concrete wall",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/overview-of-device-from-front-righ-slight-down.webp": {
+    "project": "inos-watcher-v3",
+    "description": "overview of device from front righ slight down no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/overview-of-device-opened-so-intenals-are-showing.webp": {
+    "project": "inos-watcher-v3",
+    "description": "overview of device opened so intenals are showing",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-watcher-v3/overview-for-device-on-concrete-wall-from-a-spectator-on-ground-pov-us.webp": {
+    "project": "inos-watcher-v3",
+    "description": "overview-for-device-on-concrete-wall-from-a-spectator-on-ground-pov-use-as-main-but-crop-because-device-is-on-the-right-and-left-is-empty",
+    "kind": "light",
+    "use_as_main": false,
+    "crop_note": "crop-because-device-is-on-the-right-and-left-is-empty",
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v3/closeup-on-device-front-top-right-open-with-fans-and-phones-showing.webp": {
+    "project": "inos-gauge-v3",
+    "description": "closeup on device front top right open with fans and phones showing no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v3/closuo-on-device-front-right-open-and.webp": {
+    "project": "inos-gauge-v3",
+    "description": "closuo on device front right open and no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v3/overview-of-device-front-top-right-opne-and.webp": {
+    "project": "inos-gauge-v3",
+    "description": "overview of device front top right opne and no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v3/overview-of-device-front-top-right-opne-and-2.webp": {
+    "project": "inos-gauge-v3",
+    "description": "overview of device front top right opne and with background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v3/overview-of-device-top-open-and.webp": {
+    "project": "inos-gauge-v3",
+    "description": "overview of device top  open and no background",
+    "kind": "cutout",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  },
+  "assets/img/projects/inos-gauge-v3/overview-of-device-top-open-and-2.webp": {
+    "project": "inos-gauge-v3",
+    "description": "overview of device top  open and with background",
+    "kind": "dark",
+    "use_as_main": false,
+    "crop_note": null,
+    "source_removed_bg": false
+  }
+}

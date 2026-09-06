@@ -85,20 +85,69 @@ function renderBlock(block, images, highlights, blockIndex) {
       </div>
     `;
   }
+  if (block.type === "poster") {
+    const im = images[block.images[0]];
+    return `
+      <figure class="layout-poster reveal" data-img-index="${block.images[0]}">
+        <img src="${im.file}" alt="" loading="lazy">
+        <figcaption class="poster-text">
+          ${block.eyebrow ? `<p class="eyebrow">${block.eyebrow}</p>` : ""}
+          <p>${block.caption}</p>
+        </figcaption>
+      </figure>
+    `;
+  }
+  if (block.type === "layered") {
+    const base = images[block.base];
+    const overlay = images[block.overlay];
+    return `
+      <div class="layout-layered reveal">
+        <div class="layered-media corner-${block.corner || "br"}">
+          <figure class="layered-base kind-${base.kind}" data-img-index="${block.base}">
+            <img src="${base.file}" alt="" loading="lazy">
+          </figure>
+          <figure class="layered-overlay kind-${overlay.kind}" data-img-index="${block.overlay}">
+            <img src="${overlay.file}" alt="" loading="lazy">
+          </figure>
+        </div>
+        ${highlightsHTML(highlights, block.highlights)}
+      </div>
+    `;
+  }
   // text
   return highlightsHTML(highlights, block.highlights).replace('class="detail-highlights"', 'class="detail-highlights detail-highlights-plain reveal"');
+}
+
+function renderVersus(block, unit) {
+  const vA = unit.versions[block.a.v];
+  const vB = unit.versions[block.b.v];
+  const imA = vA.images[block.a.img];
+  const imB = vB.images[block.b.img];
+  return `
+    <div class="layout-versus reveal">
+      <p class="versus-heading">${vA.versionLabel} <span>&rarr;</span> ${vB.versionLabel}</p>
+      <div class="versus-media">
+        <figure class="versus-fig kind-${imA.kind}"><img src="${imA.file}" alt="" loading="lazy"><figcaption>${vA.versionLabel}</figcaption></figure>
+        <figure class="versus-fig kind-${imB.kind}"><img src="${imB.file}" alt="" loading="lazy"><figcaption>${vB.versionLabel}</figcaption></figure>
+      </div>
+      <ul class="versus-changes">
+        ${block.changes.map(c => `<li>${c}</li>`).join("")}
+      </ul>
+    </div>
+  `;
 }
 
 function renderProject(unit, field, versionIndex) {
   const v = unit.versions[versionIndex];
   const hasVersions = unit.versions.length > 1;
   const layout = getLayout(unit.id, v.versionLabel);
+  const fieldIndex = field.units.findIndex(u => u.id === unit.id);
   const hero = layout ? v.images[layout.hero] : pickHero(v.images);
   const heroIndex = v.images.indexOf(hero);
 
   let blocksHTML = "";
   if (layout) {
-    blocksHTML = layout.blocks.map(b => renderBlock(b, v.images, v.highlights)).join("");
+    blocksHTML = layout.blocks.map(b => b.type === "versus" ? renderVersus(b, unit) : renderBlock(b, v.images, v.highlights)).join("");
   } else if (v.highlights.length > 0) {
     blocksHTML = `<ul class="detail-highlights detail-highlights-plain reveal">${v.highlights.map(h => `<li>${h}</li>`).join("")}</ul>`;
   }
@@ -120,6 +169,7 @@ function renderProject(unit, field, versionIndex) {
         <p class="eyebrow">${field.categoryLabel}</p>
         <h1>${v.title.replace(/\s*\[.*?\]\s*$/, "")}</h1>
         ${unit.subtitle ? `<p class="project-subtitle">${unit.subtitle}</p>` : ""}
+        ${PROJECT_TAGS[unit.id] ? `<p class="project-identity">${String(fieldIndex + 1).padStart(2, "0")} &middot; ${field.categoryLabel} &middot; ${PROJECT_TAGS[unit.id].join(" &middot; ")}</p>` : ""}
         ${hasVersions ? `
           <div class="version-switcher" id="version-switcher">
             ${unit.versions.map((vv, i) => `<button class="version-btn ${i === versionIndex ? "is-active" : ""}" data-vindex="${i}">${vv.versionLabel}</button>`).join("")}
