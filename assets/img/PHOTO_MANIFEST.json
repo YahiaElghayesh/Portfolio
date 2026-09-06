@@ -58,18 +58,18 @@
   "assets/img/projects/general-benchmark/closup-with-white-background.webp": {
     "project": "general-benchmark",
     "description": "closup with white background",
-    "kind": "light",
+    "kind": "cutout",
     "use_as_main": false,
     "crop_note": null,
-    "source_removed_bg": false
+    "source_removed_bg": true
   },
   "assets/img/projects/general-benchmark/overview-with-white-background.webp": {
     "project": "general-benchmark",
     "description": "overview with white background",
-    "kind": "light",
+    "kind": "cutout",
     "use_as_main": false,
     "crop_note": null,
-    "source_removed_bg": false
+    "source_removed_bg": true
   },
   "assets/img/projects/gpr/antenna-pcb-render.webp": {
     "project": "gpr",
