@@ -10,13 +10,13 @@ const WORKSHOP_STRIP = [
 
 // ---------- Companies worked with (logos where sourced; falls back to wordmark) ----------
 const PARTNERS = [
-  { name: "Digis Squared", logo: "assets/img/logos/partners/digis-squared.webp" },
-  { name: "Devonics" },
-  { name: "Bedaya 3D Printing" },
-  { name: "Digital Delmar", logo: "assets/img/logos/partners/digital-delmar.webp" },
-  { name: "Red Telecom", logo: "assets/img/logos/partners/red-telecom.webp" },
-  { name: "MSA University Center of Excellence", logo: "assets/img/logos/partners/msa-university.webp" },
-  { name: "Hand in Hand", logo: "assets/img/logos/partners/hand-in-hand.webp" },
+  { name: "Digis Squared", logo: "assets/img/logos/partners/digis-squared.webp", url: "https://digis2.com" },
+  { name: "Devonics", url: "https://www.devonics.com" },
+  { name: "Bedaya 3D Printing", url: "https://www.bedaya3d.com" },
+  { name: "Digital Delmar", logo: "assets/img/logos/partners/digital-delmar.webp", url: "https://ddelmar.ai" },
+  { name: "Red Telecom", logo: "assets/img/logos/partners/red-telecom.webp", url: "https://www.redtlc.com" },
+  { name: "MSA University Center of Excellence", logo: "assets/img/logos/partners/msa-university.webp", url: "https://msa.edu.eg" },
+  { name: "Hand in Hand", logo: "assets/img/logos/partners/hand-in-hand.webp", url: "https://www.handinhand-ngo.com" },
 ];
 
 // ---------- Toolbox (real vendor logos where available, monogram fallback otherwise) ----------

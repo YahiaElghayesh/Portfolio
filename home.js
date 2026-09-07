@@ -31,9 +31,12 @@ observeRevealAll(".toolbox-col");
 // Partners
 const partnersRow = document.getElementById("partners-row");
 partnersRow.innerHTML = PARTNERS.map(p => `
-  <div class="partner-item reveal">
-    ${p.logo ? `<img src="${p.logo}" alt="${p.name}" loading="lazy">` : `<span class="partner-name">${p.name}</span>`}
-  </div>
+  <a class="partner-item reveal" href="${p.url}" target="_blank" rel="noopener">
+    <span class="partner-mark">
+      ${p.logo ? `<img src="${p.logo}" alt="${p.name}" loading="lazy">` : `<span class="partner-wordmark">${p.name}</span>`}
+    </span>
+    <span class="partner-label">${p.name}</span>
+  </a>
 `).join("");
 observeRevealAll(".partner-item");
 
