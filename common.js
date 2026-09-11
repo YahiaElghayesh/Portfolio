@@ -96,9 +96,40 @@ function initMobileNav() {
   }));
 }
 
+// Native `scroll-behavior: smooth` duration scales with distance — on a long page
+// it can take close to a second, which reads as "the button doesn't work" rather
+// than "it's slow". Give #top specifically a fast, fixed-duration eased scroll.
+function initFastBackToTop() {
+  document.querySelectorAll('a[href="#top"]').forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const startY = window.scrollY;
+      if (startY <= 0) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      const duration = 500;
+      const start = performance.now();
+      function step(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        // behavior:"auto" is required here — window.scrollTo otherwise inherits the
+        // page's CSS scroll-behavior:smooth, so each frame would kick off its own
+        // smooth-scroll animation on top of this one instead of jumping instantly
+        // to this frame's computed position, turning the easing to mush.
+        window.scrollTo({ top: startY * (1 - eased), behavior: "auto" });
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
   initMobileNav();
+  initFastBackToTop();
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 });

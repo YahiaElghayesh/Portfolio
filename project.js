@@ -38,7 +38,6 @@ function renderBlock(block, images, highlights, blockIndex) {
     return `
       <figure class="layout-wide reveal ${im.kind === "cutout" ? "kind-cutout" : ""}" data-img-index="${block.images[0]}">
         <img src="${im.file}" alt="" loading="lazy">
-        ${block.caption ? `<figcaption>${block.caption}</figcaption>` : ""}
       </figure>
     `;
   }
@@ -53,9 +52,12 @@ function renderBlock(block, images, highlights, blockIndex) {
     `;
   }
   if (block.type === "inset") {
+    // supports one image (classic detail shot) or several (a small stacked gallery
+    // beside the text) — same side-by-side, text-and-photos-together layout either way
+    const insetImgs = block.images.map(i => figHTML(images[i], i, "inset-fig")).join("");
     return `
-      <div class="layout-inset side-${block.side} reveal">
-        ${figHTML(images[block.images[0]], block.images[0], "inset-fig")}
+      <div class="layout-inset side-${block.side} reveal ${block.images.length > 1 ? "is-gallery" : ""}">
+        <div class="inset-media">${insetImgs}</div>
         <div class="inset-text">
           <span class="inset-label">Detail</span>
           ${highlightsHTML(highlights, block.highlights)}

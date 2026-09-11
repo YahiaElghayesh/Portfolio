@@ -13,7 +13,8 @@
 </head>
 <body>
 
-<header class="site-header" id="top">
+<span id="top" aria-hidden="true"></span>
+<header class="site-header">
   <div class="container header-inner">
     <a class="brand" href="#top">Yahia Elghayesh</a>
     <nav class="main-nav" id="main-nav">
@@ -30,16 +31,16 @@
 
 <main>
 
-  <!-- HERO -->
-  <section class="hero">
+  <!-- HERO — a real photo of Yahia as a full depth-layered scene, not a boxed portrait -->
+  <section class="hero" id="hero-scene">
+    <div class="hero-scene-media" id="hero-scene-media" aria-hidden="true">
+      <img src="assets/img/hero-scene.webp" alt="" loading="eager">
+    </div>
     <div class="container hero-inner">
-      <div class="hero-copy reveal">
+      <div class="hero-copy reveal" id="hero-copy">
         <p class="eyebrow">Product Design &amp; Hardware Engineering</p>
         <h1>Yahia<br>Elghayesh</h1>
         <p class="hero-tagline">&ldquo;If it exists, I refine it.<br>If it doesn&rsquo;t, I design it.&rdquo;</p>
-      </div>
-      <div class="hero-portrait reveal">
-        <img src="assets/img/headshot.webp" alt="Portrait of Yahia Elghayesh" width="1333" height="2000">
       </div>
     </div>
     <div class="container hero-foot reveal">
@@ -51,9 +52,8 @@
     </div>
     <div class="hero-stats">
       <div class="container stats-row">
-        <div class="stat"><span class="stat-num">40+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
-        <div class="stat"><span class="stat-num">15</span><span class="stat-label">Featured highlights across 5 sectors</span></div>
-        <div class="stat"><span class="stat-num">CSWP</span><span class="stat-label">Certified SOLIDWORKS Professional</span></div>
+        <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
+        <div class="stat"><span class="stat-num">15</span><span class="stat-label">Featured projects across 5 sectors</span></div>
       </div>
     </div>
   </section>
@@ -67,10 +67,9 @@
       </div>
       <div class="about-grid">
         <div class="about-copy reveal">
-          <p class="about-lead">Every project starts the same way: understand the real problem, then build whatever it takes to solve it — mechanical, electrical, or software.</p>
-          <p>Proven project management record, delivering <strong>40+ projects</strong> on time and within budget across multiple sectors — from medical devices to telecom field equipment, environmental monitoring, and robotics.</p>
+          <p>Proven project management record, delivering <strong>60+ projects</strong> on time and within budget across multiple sectors — from medical devices to telecom field equipment, environmental monitoring, and robotics.</p>
           <p>Driven self-learner with strong reasoning and articulate presentation. Passionate, relentless, and fears nothing.</p>
-          <p class="about-offduty">When I&rsquo;m not designing, I&rsquo;m usually building something, riding my motorcycle, or in the gym training.</p>
+          <blockquote class="about-offduty">When I&rsquo;m not designing, I&rsquo;m usually building something, riding my motorcycle, or in the gym training.</blockquote>
         </div>
         <div class="about-certs reveal">
           <h3>Certifications</h3>
@@ -122,8 +121,8 @@
     <div class="container">
       <div class="section-head reveal">
         <p class="eyebrow">Selected Work</p>
-        <h2>Featured work by field</h2>
-        <p class="section-sub">Highlights from 40+ delivered projects — from a manufacturable stereotactic neurosurgery frame to autonomous minesweeping robots, each one went from problem to physical, deployed product.</p>
+        <h2>Featured Work</h2>
+        <p class="section-sub">15 featured projects from 60+ delivered — from a manufacturable stereotactic neurosurgery frame to autonomous minesweeping robots, each one went from problem to physical, deployed product.</p>
       </div>
       <div class="fields-teaser" id="fields-teaser"><!-- injected by home.js --></div>
       <p class="work-teaser-cta reveal"><a href="work.html" class="btn-text">Browse all featured work <span>→</span></a></p>

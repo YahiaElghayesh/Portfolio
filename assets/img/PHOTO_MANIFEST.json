@@ -162,10 +162,10 @@
   "assets/img/projects/inos-watcher-v1/exploded-view-from-top-right-front.webp": {
     "project": "inos-watcher-v1",
     "description": "exploded view from top right front",
-    "kind": "light",
+    "kind": "cutout",
     "use_as_main": false,
     "crop_note": null,
-    "source_removed_bg": false
+    "source_removed_bg": true
   },
   "assets/img/projects/inos-watcher-v1/overview-from-front-left.webp": {
     "project": "inos-watcher-v1",

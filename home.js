@@ -1,12 +1,13 @@
 // ---------- Home page rendering: certifications, toolbox, partners, workshop strip, work teaser ----------
 
-// Certifications
+// Certifications — each links out to its verifiable Credly credential
 const certList = document.getElementById("cert-list");
 certList.innerHTML = CERTS.map(c => `
   <li>
-    <span class="cert-badge">${certBadgeSVG()}</span>
-    <span class="cert-name"><strong>${c.code}</strong><em>${c.name}</em></span>
-    <img class="cert-issuer" src="${CERT_ISSUER_LOGO}" alt="Dassault Systèmes" loading="lazy">
+    <a class="cert-link" href="${c.url}" target="_blank" rel="noopener">
+      <img class="cert-badge" src="${c.badge}" alt="${c.code} badge" loading="lazy">
+      <span class="cert-name"><strong>${c.code}</strong><em>${c.name}</em></span>
+    </a>
   </li>
 `).join("");
 
@@ -31,11 +32,11 @@ observeRevealAll(".toolbox-col");
 // Partners
 const partnersRow = document.getElementById("partners-row");
 partnersRow.innerHTML = PARTNERS.map(p => `
-  <a class="partner-item reveal" href="${p.url}" target="_blank" rel="noopener">
+  <a class="partner-item reveal" href="${p.url}" target="_blank" rel="noopener" data-partner="${p.name}">
     <span class="partner-mark">
       ${p.logo ? `<img src="${p.logo}" alt="${p.name}" loading="lazy">` : `<span class="partner-wordmark">${p.name}</span>`}
     </span>
-    <span class="partner-label">${p.name}</span>
+    <span class="partner-label">${p.flag && FLAG_ICONS[p.flag] ? `<span class="partner-flag">${FLAG_ICONS[p.flag]}</span>` : ""}${p.name}</span>
   </a>
 `).join("");
 observeRevealAll(".partner-item");
@@ -66,3 +67,37 @@ if (fieldsTeaser) {
 }
 
 observeRevealAll(".reveal");
+
+// ---------- Hero depth scene: slow scroll parallax + a subtle pointer tilt on the
+// photo layer, so it reads as one physical space the page is built around rather
+// than a flat background image. One authored motion, smoothly eased. ----------
+(function () {
+  const scene = document.getElementById("hero-scene");
+  const media = document.getElementById("hero-scene-media");
+  if (!scene || !media) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  let targetX = 0, targetY = 0, curX = 0, curY = 0, scrollShift = 0;
+
+  function onScroll() {
+    const rect = scene.getBoundingClientRect();
+    const progress = Math.min(1, Math.max(0, -rect.top / (rect.height || 1)));
+    scrollShift = progress * 70;
+  }
+  function onPointerMove(e) {
+    const rect = scene.getBoundingClientRect();
+    if (e.clientY < rect.top || e.clientY > rect.bottom) return;
+    targetX = (e.clientX - rect.left) / rect.width - 0.5;
+    targetY = (e.clientY - rect.top) / rect.height - 0.5;
+  }
+  function tick() {
+    curX += (targetX - curX) * 0.055;
+    curY += (targetY - curY) * 0.055;
+    media.style.transform = `translate3d(${curX * 16}px, ${scrollShift + curY * 12}px, 0) scale(1.06)`;
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("mousemove", onPointerMove, { passive: true });
+  onScroll();
+  requestAnimationFrame(tick);
+})();
