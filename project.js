@@ -9,7 +9,6 @@ const root = document.getElementById("project-root");
 if (!found) {
   root.innerHTML = `
     <div class="container project-notfound reveal">
-      <p class="eyebrow">Not found</p>
       <h2>That project doesn't exist.</h2>
       <p><a class="btn-text" href="work.html">Back to all work <span>→</span></a></p>
     </div>
@@ -88,7 +87,7 @@ function renderBlock(block, images, highlights, blockIndex) {
       <figure class="layout-poster reveal" data-img-index="${block.images[0]}">
         <img src="${im.file}" alt="" loading="lazy">
         <figcaption class="poster-text">
-          ${block.eyebrow ? `<p class="eyebrow">${block.eyebrow}</p>` : ""}
+          ${block.eyebrow ? `<p class="poster-tag">${block.eyebrow}</p>` : ""}
           <p>${block.caption}</p>
         </figcaption>
       </figure>
@@ -163,7 +162,6 @@ function renderProject(unit, field, versionIndex) {
 
     <header class="project-head reveal">
       <div class="container">
-        <p class="eyebrow">${field.categoryLabel}</p>
         <h1>${v.title.replace(/\s*\[.*?\]\s*$/, "")}</h1>
         ${unit.subtitle ? `<p class="project-subtitle">${unit.subtitle}</p>` : ""}
         ${PROJECT_TAGS[unit.id] ? `<p class="project-identity">${String(fieldIndex + 1).padStart(2, "0")} &middot; ${field.categoryLabel} &middot; ${PROJECT_TAGS[unit.id].join(" &middot; ")}</p>` : ""}
