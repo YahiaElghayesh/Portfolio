@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Index — Yahia Elghayesh</title>
-<meta name="description" content="The complete log of Yahia Elghayesh's hardware and product design work, every field and revision.">
+<title>Featured Work — Yahia Elghayesh</title>
+<meta name="description" content="Featured hardware and product design projects by Yahia Elghayesh, organized by field.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,32 +12,39 @@
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="topbar">
-  <div class="container topbar-inner">
-    <a class="topbar-id" href="index.html">
-      <span class="name">YAHIA ELGHAYESH</span>
-      <span class="role">Hardware &amp; Product Design Engineer</span>
-    </a>
+  <div class="topbar-inner">
+    <a class="topbar-id" href="index.html">Yahia Elghayesh</a>
     <button class="topbar-menu-btn" aria-expanded="false" aria-controls="site-nav">
       <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
-      MENU
+      <span class="visually-hidden">Menu</span>
     </button>
     <nav class="topbar-nav" id="site-nav">
-      <a href="index.html" data-page="index.html">Log</a>
-      <a href="work.html" data-page="work.html">Full Index</a>
-      <a href="index.html#about-section">About</a>
-      <a class="cta" href="mailto:y.elghayesh@gmail.com">Contact</a>
+      <a href="index.html" data-page="index.html">Home</a>
+      <a href="work.html" data-page="work.html">Work</a>
+      <a href="index.html#contact">Contact</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
-  <section class="work-hero" id="work-hero"></section>
-  <div id="work-ledger-root"></div>
+  <section class="work-intro" id="work-intro"></section>
+  <div id="field-stages-root"></div>
+
+  <section class="section" id="contact-section">
+    <div class="container contact-section" data-reveal>
+      <h2 data-reveal-text>Let's talk</h2>
+      <a class="contact-email" data-magnetic href="mailto:y.elghayesh@gmail.com">y.elghayesh@gmail.com</a>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer" id="site-footer"></footer>
 
 <script src="data.js"></script>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="motion.js"></script>
 <script src="common.js"></script>
 <script src="work.js"></script>
 </body>

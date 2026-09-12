@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yahia Elghayesh — Hardware &amp; Product Design Engineer</title>
-<meta name="description" content="Precision hardware across medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation — logged project by project, revision by revision.">
+<meta name="description" content="Portfolio of Yahia Elghayesh, a hardware and product design engineer working across medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,37 +12,44 @@
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="topbar">
-  <div class="container topbar-inner">
-    <a class="topbar-id" href="index.html">
-      <span class="name">YAHIA ELGHAYESH</span>
-      <span class="role">Hardware &amp; Product Design Engineer</span>
-    </a>
+  <div class="topbar-inner">
+    <a class="topbar-id" href="index.html">Yahia Elghayesh</a>
     <button class="topbar-menu-btn" aria-expanded="false" aria-controls="site-nav">
       <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
-      MENU
+      <span class="visually-hidden">Menu</span>
     </button>
     <nav class="topbar-nav" id="site-nav">
-      <a href="index.html" data-page="index.html">Log</a>
-      <a href="work.html" data-page="work.html">Full Index</a>
-      <a href="#about-section">About</a>
-      <a class="cta" href="mailto:y.elghayesh@gmail.com">Contact</a>
+      <a href="index.html" data-page="index.html">Home</a>
+      <a href="work.html" data-page="work.html">Work</a>
+      <a href="#contact">Contact</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
-  <section class="log-header" id="log-header"></section>
+  <section class="hero">
+    <div class="hero-photo-wrap"><img src="assets/img/hero-scene.webp" alt="Yahia Elghayesh seated in his studio"></div>
+    <div class="hero-floor-shadow"></div>
+    <div class="container">
+      <div id="hero-content" class="hero-content"></div>
+    </div>
+    <div class="hero-scroll-cue"><span class="line"></span>Scroll</div>
+  </section>
 
-  <div id="ledger-root"></div>
-
-  <section class="section" id="about-section"></section>
-  <section class="section" id="partners-section"></section>
   <section class="section" id="toolbox-section"></section>
+  <section class="section" id="workshop-section"></section>
+  <section class="section" id="partners-section"></section>
+  <section class="section" id="work-cta-section"></section>
+  <section class="section" id="contact-section"></section>
 </main>
 
 <footer class="site-footer" id="site-footer"></footer>
 
 <script src="data.js"></script>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="motion.js"></script>
 <script src="common.js"></script>
 <script src="home.js"></script>
 </body>
