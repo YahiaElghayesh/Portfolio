@@ -3,162 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yahia Elghayesh — Product Design &amp; Hardware Engineering</title>
-<meta name="description" content="Yahia Elghayesh — Product design and hardware engineering. Featured work across medical devices, telecom field hardware, environmental monitoring, and robotics: identifying problems, designing, prototyping, manufacturing, and deploying fully realized products.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Yahia Elghayesh — Hardware &amp; Product Design Engineer</title>
+<meta name="description" content="Precision hardware across medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation — logged project by project, revision by revision.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-<span id="top" aria-hidden="true"></span>
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="#top">Yahia Elghayesh</a>
-    <nav class="main-nav" id="main-nav">
-      <a href="#about">About</a>
-      <a href="#toolbox">Toolbox</a>
-      <a href="work.html">Work</a>
-      <a href="#contact" class="nav-cta">Contact</a>
-    </nav>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-      <span></span><span></span><span></span>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="topbar-id" href="index.html">
+      <span class="name">YAHIA ELGHAYESH</span>
+      <span class="role">Hardware &amp; Product Design Engineer</span>
+    </a>
+    <button class="topbar-menu-btn" aria-expanded="false" aria-controls="site-nav">
+      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      MENU
     </button>
+    <nav class="topbar-nav" id="site-nav">
+      <a href="index.html" data-page="index.html">Log</a>
+      <a href="work.html" data-page="work.html">Full Index</a>
+      <a href="#about-section">About</a>
+      <a class="cta" href="mailto:y.elghayesh@gmail.com">Contact</a>
+    </nav>
   </div>
 </header>
 
-<main>
+<main id="main">
+  <section class="log-header" id="log-header"></section>
 
-  <!-- HERO — a real photo of Yahia as a full depth-layered scene, not a boxed portrait -->
-  <section class="hero" id="hero-scene">
-    <div class="hero-photo-wrap">
-      <div class="hero-scene-media" id="hero-scene-media" aria-hidden="true">
-        <img src="assets/img/hero-scene.webp" alt="" loading="eager">
-      </div>
-      <div class="container hero-inner">
-        <div class="hero-copy reveal" id="hero-copy">
-          <h1>Yahia<br>Elghayesh</h1>
-          <p class="hero-role">Product Design &amp; Hardware Engineering</p>
-          <p class="hero-tagline">&ldquo;If it exists, I refine it. If it doesn&rsquo;t, I design it.&rdquo;</p>
-        </div>
-      </div>
-    </div>
-    <div class="container hero-foot reveal">
-      <p class="hero-desc">I engineer solutions from the ground up — identifying problems, designing, prototyping, manufacturing, and deploying fully realized products across medical, telecom, environmental, and robotics sectors.</p>
-      <div class="hero-actions">
-        <a href="work.html" class="btn-text">View Featured Work <span>→</span></a>
-        <a href="#contact" class="btn-outline">Get in Touch</a>
-      </div>
-    </div>
-    <div class="hero-stats">
-      <div class="container stats-row">
-        <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
-        <div class="stat"><span class="stat-num">15</span><span class="stat-label">Featured projects across 5 sectors</span></div>
-      </div>
-    </div>
-  </section>
+  <div id="ledger-root"></div>
 
-  <!-- ABOUT -->
-  <section id="about" class="section">
-    <div class="container">
-      <div class="section-head reveal">
-        <h2>Have you met Yahia Elghayesh?</h2>
-      </div>
-      <div class="about-grid">
-        <div class="about-copy reveal">
-          <p>Proven project management record, delivering <strong>60+ projects</strong> on time and within budget across multiple sectors — from medical devices to telecom field equipment, environmental monitoring, and robotics.</p>
-          <p>Driven self-learner with strong reasoning and articulate presentation. Passionate, relentless, and fears nothing.</p>
-          <blockquote class="about-offduty">When I&rsquo;m not designing, I&rsquo;m usually building something, riding my motorcycle, or in the gym training.</blockquote>
-        </div>
-        <div class="about-certs reveal">
-          <h3>Certifications</h3>
-          <ul class="cert-list" id="cert-list"><!-- injected by home.js --></ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WORKSHOP FEATURE -->
-  <section class="workshop reveal">
-    <img src="assets/img/workshop-overview.webp" alt="Yahia's home workshop, built up since the age of eight, with a full wall of organized hand tools, a workbench, and a motorcycle" loading="lazy">
-    <div class="workshop-overlay">
-      <div class="container">
-        <p class="workshop-text">The workshop I began building at the age of <strong>eight</strong>.<br>A testament to my lifelong passion for designing, creating, and bringing ideas to life.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- WORKSHOP STRIP (real action photos) -->
-  <section class="workshop-strip">
-    <div class="strip-track" id="workshop-strip"><!-- injected by home.js --></div>
-  </section>
-
-  <!-- TOOLBOX -->
-  <section id="toolbox" class="section">
-    <div class="container">
-      <div class="section-head reveal">
-        <h2>My Engineering Toolbox</h2>
-      </div>
-      <div class="toolbox-grid" id="toolbox-grid"><!-- injected by home.js --></div>
-    </div>
-  </section>
-
-  <!-- PARTNERS / COLLABORATIONS -->
-  <section id="partners" class="section partners-section">
-    <div class="container">
-      <div class="section-head reveal">
-        <h2>Who I&rsquo;ve worked with</h2>
-      </div>
-      <div class="partners-row" id="partners-row"><!-- injected by home.js --></div>
-    </div>
-  </section>
-
-  <!-- WORK TEASER -->
-  <section class="section work-teaser-section">
-    <div class="container">
-      <div class="section-head reveal">
-        <h2>Featured Work</h2>
-        <p class="section-sub">15 featured projects from 60+ delivered — from a manufacturable stereotactic neurosurgery frame to autonomous minesweeping robots, each one went from problem to physical, deployed product.</p>
-      </div>
-      <div class="fields-teaser" id="fields-teaser"><!-- injected by home.js --></div>
-      <p class="work-teaser-cta reveal"><a href="work.html" class="btn-text">Browse all featured work <span>→</span></a></p>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact" class="section contact-section">
-    <div class="container">
-      <div class="section-head reveal">
-        <h2>Have a problem worth solving?</h2>
-        <p class="section-sub">I&rsquo;m always open to discussing new projects, product design challenges, or hardware engineering roles.</p>
-      </div>
-      <div class="contact-links reveal">
-        <a href="mailto:y.elghayesh@gmail.com" class="contact-link">
-          <span class="contact-label">Email</span>
-          <span class="contact-value">y.elghayesh@gmail.com</span>
-        </a>
-        <a href="https://wa.me/+201000447702" class="contact-link" target="_blank" rel="noopener">
-          <span class="contact-label">WhatsApp</span>
-          <span class="contact-value">+20 100 044 7702</span>
-        </a>
-        <a href="http://www.linkedin.com/in/elghayesh" class="contact-link" target="_blank" rel="noopener">
-          <span class="contact-label">LinkedIn</span>
-          <span class="contact-value">linkedin.com/in/elghayesh</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
+  <section class="section" id="about-section"></section>
+  <section class="section" id="partners-section"></section>
+  <section class="section" id="toolbox-section"></section>
 </main>
 
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <p>&copy; <span id="year"></span> Yahia Elghayesh. All projects and imagery shown are original work.</p>
-    <a href="#top">Back to top ↑</a>
-  </div>
-</footer>
+<footer class="site-footer" id="site-footer"></footer>
 
 <script src="data.js"></script>
 <script src="common.js"></script>

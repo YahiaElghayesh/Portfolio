@@ -1,41 +1,31 @@
-// ---------- Work index: fields, each listing its project units as asymmetric zig-zag rows ----------
+// ---------- Work index (work.html): full log, jump nav, no about/partners chrome ----------
 
-const fieldsEl = document.getElementById("work-fields");
-const jumpNav = document.getElementById("field-jump");
+function renderWorkHero() {
+  const c = countAll();
+  document.getElementById("work-hero").innerHTML = `
+    <div class="container">
+      <div class="log-meta">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span><strong>FULL INDEX</strong></span>
+        <span class="sep">—</span>
+        <span><span class="mono-num" data-count-to="${c.projects}">0</span> projects</span>
+        <span class="sep">·</span>
+        <span><span class="mono-num" data-count-to="${c.versions}">0</span> revisions</span>
+      </div>
+      <h1 class="">Every entry, every field, every revision.</h1>
+      <div class="field-jump">
+        ${FIELDS.map((f) => `<a href="#${f.category}">${f.categoryLabel}</a>`).join("")}
+      </div>
+    </div>`;
+}
 
-jumpNav.innerHTML = FIELDS.map(f => `<a href="#${f.category}">${f.categoryLabel}</a>`).join("");
-
-// varies row image aspect so consecutive rows never match
-const ASPECTS = ["4/3", "1/1", "16/10", "3/4"];
-
-fieldsEl.innerHTML = FIELDS.map(field => `
-  <div class="field-group" id="${field.category}">
-    <div class="field-head reveal">
-      <h3>${field.categoryLabel}</h3>
-      <span class="field-count">${field.units.length} ${field.units.length === 1 ? "project" : "projects"}</span>
+document.getElementById("work-ledger-root").innerHTML = renderLedgerAllFields();
+renderWorkHero();
+document.getElementById("site-footer").innerHTML = `
+  <div class="container footer-inner">
+    <div>
+      <div class="f-name">Yahia Elghayesh</div>
+      <a class="f-email mono" href="mailto:y.elghayesh@gmail.com">y.elghayesh@gmail.com</a>
     </div>
-    <div class="work-rows">
-      ${field.units.map((unit, i) => {
-        const v0 = unit.versions[0];
-        const thumb = getHeroImage(unit, 0);
-        const hasVersions = unit.versions.length > 1;
-        const tags = [hasVersions ? `${unit.versions.length} versions` : "Delivered", ...(PROJECT_TAGS[unit.id] || [])];
-        const aspect = ASPECTS[i % ASPECTS.length];
-        return `
-        <a class="work-row reveal ${i % 2 === 1 ? "is-reversed" : ""}" href="project.html?id=${unit.id}">
-          <span class="work-row-media kind-${thumb.kind}" style="--row-aspect:${aspect}"><img src="${thumb.file}" alt="" loading="lazy"></span>
-          <span class="work-row-body">
-            <span class="work-row-tags">${tags.join(" &middot; ")}</span>
-            <span class="work-row-title">${unit.title}</span>
-            ${unit.subtitle ? `<span class="work-row-subtitle">${unit.subtitle}</span>` : ""}
-            <span class="work-row-desc">${v0.desc}</span>
-            <span class="work-row-cta">View project <span>&rarr;</span></span>
-          </span>
-        </a>
-      `;
-      }).join("")}
-    </div>
-  </div>
-`).join("");
-
-observeRevealAll(".reveal");
+    <div class="footer-meta mono">Log maintained continuously · every entry sourced from real hardware</div>
+  </div>`;

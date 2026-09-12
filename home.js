@@ -1,103 +1,102 @@
-// ---------- Home page rendering: certifications, toolbox, partners, workshop strip, work teaser ----------
+// ---------- Home (index.html): masthead ledger header + full field-grouped log ----------
 
-// Certifications — each links out to its verifiable Credly credential
-const certList = document.getElementById("cert-list");
-certList.innerHTML = CERTS.map(c => `
-  <li>
-    <a class="cert-link" href="${c.url}" target="_blank" rel="noopener">
-      <img class="cert-badge" src="${c.badge}" alt="${c.code} badge" loading="lazy">
-      <span class="cert-name"><strong>${c.code}</strong><em>${c.name}</em></span>
-    </a>
-  </li>
-`).join("");
-
-// Toolbox
-const toolboxGrid = document.getElementById("toolbox-grid");
-toolboxGrid.innerHTML = TOOLBOX.map(t => `
-  <div class="toolbox-col reveal">
-    <h3>${t.name}</h3>
-    ${t.detail ? `<p class="toolbox-detail">${t.detail}</p>` : ""}
-    <div class="tool-row">
-      ${t.tools.map(tool => `
-        <div class="tool-item">
-          ${logoOrMonogram(tool.name, tool.logo)}
-          <span class="tool-name">${tool.name}</span>
-        </div>
-      `).join("")}
-    </div>
-  </div>
-`).join("");
-observeRevealAll(".toolbox-col");
-
-// Partners
-const partnersRow = document.getElementById("partners-row");
-partnersRow.innerHTML = PARTNERS.map(p => `
-  <a class="partner-item reveal" href="${p.url}" target="_blank" rel="noopener" data-partner="${p.name}">
-    <span class="partner-mark">
-      ${p.logo ? `<img src="${p.logo}" alt="${p.name}" loading="lazy">` : `<span class="partner-wordmark">${p.name}</span>`}
-    </span>
-    <span class="partner-label">${p.flag && FLAG_ICONS[p.flag] ? `<span class="partner-flag">${FLAG_ICONS[p.flag]}</span>` : ""}${p.name}</span>
-  </a>
-`).join("");
-observeRevealAll(".partner-item");
-
-// Workshop strip
-const workshopStrip = document.getElementById("workshop-strip");
-workshopStrip.innerHTML = WORKSHOP_STRIP.map(w => `
-  <div class="strip-item reveal"><img src="${w.file}" alt="${w.alt}" loading="lazy"></div>
-`).join("");
-observeRevealAll(".strip-item");
-
-// Work teaser (fields overview, links out to work.html)
-const fieldsTeaser = document.getElementById("fields-teaser");
-if (fieldsTeaser) {
-  fieldsTeaser.innerHTML = FIELDS.map(field => {
-    const thumb = getHeroImage(field.units[0], 0);
-    return `
-    <a class="field-teaser-card reveal" href="work.html#${field.category}">
-      <span class="field-teaser-media kind-${thumb.kind}"><img src="${thumb.file}" alt="" loading="lazy"></span>
-      <span class="field-teaser-body">
-        <span class="field-teaser-name">${field.categoryLabel}</span>
-        <span class="field-teaser-count">${field.units.length} ${field.units.length === 1 ? "project" : "projects"}</span>
-      </span>
-    </a>
-  `;
-  }).join("");
-  observeRevealAll(".field-teaser-card");
+function renderMasthead() {
+  const c = countAll();
+  document.getElementById("log-header").innerHTML = `
+    <div class="container">
+      <div class="log-meta">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span><strong>LOG</strong></span>
+        <span class="sep">—</span>
+        <span>Yahia Elghayesh, Hardware &amp; Product Design Engineer</span>
+        <span class="sep">—</span>
+        <span><span class="mono-num" data-count-to="${c.projects}">0</span> projects</span>
+        <span class="sep">·</span>
+        <span><span class="mono-num" data-count-to="${c.versions}">0</span> shipped revisions</span>
+        <span class="sep">·</span>
+        <span><span class="mono-num" data-count-to="${c.fields}">0</span> disciplines</span>
+      </div>
+      <div class="masthead">
+        <h1>Precision hardware, proven across five disciplines.</h1>
+        <p class="lede">Medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation — each entry below is real, shipped hardware, logged with what changed and why.</p>
+      </div>
+    </div>`;
 }
 
-observeRevealAll(".reveal");
+function renderAbout() {
+  document.getElementById("about-section").innerHTML = `
+    <div class="container about-grid">
+      <div class="">
+        <div class="section-head"><h2>In the workshop</h2></div>
+        <p class="measure" style="color:var(--ink-2)">Most of these projects started on this bench — machining, wiring, and assembling the same hardware that ends up in the field, before it ever reaches a client site.</p>
+        <div class="certs-row" style="margin-top:var(--space-6)">
+          ${CERTS.map(
+            (c) => `<a class="cert-item" href="${c.url}" target="_blank" rel="noopener">
+              <img src="${c.badge}" alt="${c.name} credential badge">
+              <span><span class="c-code mono">${c.code}</span><br><span class="c-name">${c.name}</span></span>
+            </a>`
+          ).join("")}
+        </div>
+      </div>
+      <div class="workshop-strip">
+        ${WORKSHOP_STRIP.map((w) => `<img src="${w.file}" alt="${w.alt}">`).join("")}
+      </div>
+    </div>`;
+}
 
-// ---------- Hero depth scene: slow scroll parallax + a subtle pointer tilt on the
-// photo layer, so it reads as one physical space the page is built around rather
-// than a flat background image. One authored motion, smoothly eased. ----------
-(function () {
-  const scene = document.getElementById("hero-scene");
-  const media = document.getElementById("hero-scene-media");
-  if (!scene || !media) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+function renderPartners() {
+  document.getElementById("partners-section").innerHTML = `
+    <div class="container">
+      <div class="section-head"><h2>Worked with</h2></div>
+      <div class="partners-strip">
+        ${PARTNERS.map(
+          (p) => `<a class="partner-item" href="${p.url}" target="_blank" rel="noopener">
+            <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
+            <img src="${p.logo}" alt="${p.name}">
+          </a>`
+        ).join("")}
+      </div>
+    </div>`;
+}
 
-  let targetX = 0, targetY = 0, curX = 0, curY = 0, scrollShift = 0;
+function renderToolbox() {
+  document.getElementById("toolbox-section").innerHTML = `
+    <div class="container">
+      <div class="section-head"><h2>Toolbox</h2></div>
+      <div class="toolbox-grid">
+        ${TOOLBOX.map(
+          (group) => `<div class="toolbox-group">
+            <h3 class="mono">${group.name}</h3>
+            <div class="tool-list">
+              ${group.tools
+                .map(
+                  (t) => `<div class="tool-item">
+                    ${t.logo ? `<img class="t-logo" src="${t.logo}" alt="${t.name} logo">` : `<span class="t-logo is-empty" aria-hidden="true"></span>`}
+                    <span>${t.name}</span>
+                  </div>`
+                )
+                .join("")}
+            </div>
+          </div>`
+        ).join("")}
+      </div>
+    </div>`;
+}
 
-  function onScroll() {
-    const rect = scene.getBoundingClientRect();
-    const progress = Math.min(1, Math.max(0, -rect.top / (rect.height || 1)));
-    scrollShift = progress * 70;
-  }
-  function onPointerMove(e) {
-    const rect = scene.getBoundingClientRect();
-    if (e.clientY < rect.top || e.clientY > rect.bottom) return;
-    targetX = (e.clientX - rect.left) / rect.width - 0.5;
-    targetY = (e.clientY - rect.top) / rect.height - 0.5;
-  }
-  function tick() {
-    curX += (targetX - curX) * 0.055;
-    curY += (targetY - curY) * 0.055;
-    media.style.transform = `translate3d(${curX * 16}px, ${scrollShift + curY * 12}px, 0) scale(1.06)`;
-    requestAnimationFrame(tick);
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("mousemove", onPointerMove, { passive: true });
-  onScroll();
-  requestAnimationFrame(tick);
-})();
+function renderFooter() {
+  document.getElementById("site-footer").innerHTML = `
+    <div class="container footer-inner">
+      <div>
+        <div class="f-name">Yahia Elghayesh</div>
+        <a class="f-email mono" href="mailto:y.elghayesh@gmail.com">y.elghayesh@gmail.com</a>
+      </div>
+      <div class="footer-meta mono">Log maintained continuously · every entry sourced from real hardware</div>
+    </div>`;
+}
+
+document.getElementById("ledger-root").innerHTML = renderLedgerAllFields();
+renderMasthead();
+renderAbout();
+renderPartners();
+renderToolbox();
+renderFooter();
