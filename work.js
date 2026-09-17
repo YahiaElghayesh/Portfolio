@@ -1,29 +1,38 @@
-// ---------- Work (work.html): field stages with scroll-scrubbed project transitions ----------
+// ---------- Work (work.html): projects as clearly compartmentalized cards ----------
 
+// Version history is always visible, never hidden behind a click: the current
+// version reads as the project's main text, older ones list below it as their
+// own labeled entries, so it's obvious right away that revisions exist.
 function renderVersionHistory(unit) {
-  const older = unit.versions.slice(1);
+  const [current, ...older] = unit.versions;
   if (!older.length) return "";
-  return `<details class="version-history">
-    <summary><svg class="vh-chev" width="10" height="10" viewBox="0 0 10 10"><path d="M2 1l6 4-6 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-      ${older.length} earlier revision${older.length > 1 ? "s" : ""}</summary>
+  return `<div class="version-history">
+    <div class="vh-head">
+      <span class="vh-badge is-current">${current.versionLabel}</span>
+      <span class="vh-head-label">Current &middot; ${older.length} earlier revision${older.length > 1 ? "s" : ""} below</span>
+    </div>
     <div class="vh-list">
       ${older
         .map(
           (v) => `<div class="vh-item">
-            <div class="vh-label">${v.versionLabel}: ${v.title}</div>
-            <p>${v.desc}</p>
+            <span class="vh-badge">${v.versionLabel}</span>
+            <div class="vh-item-body">
+              <div class="vh-label">${v.title}</div>
+              <p>${v.desc}</p>
+            </div>
           </div>`
         )
         .join("")}
     </div>
-  </details>`;
+  </div>`;
 }
 
 function renderStageSlide(unit, field, i) {
   const latest = unit.versions[0];
   const gallery = getGalleryImages(unit, 0).slice(0, 6);
   const tags = PROJECT_TAGS[unit.id] || [];
-  return `<article class="stage-slide${i === 0 ? " is-active" : ""}" data-slide="${i}" id="${unit.id}">
+  return `<article class="stage-slide" id="${unit.id}" data-reveal>
+    <span class="stage-index">${String(i + 1).padStart(2, "0")}</span>
     <div class="stage-grid">
       ${renderStageVisual(gallery, unit.title)}
       <div class="stage-text">
@@ -42,66 +51,15 @@ function renderStageSlide(unit, field, i) {
 function renderFieldStage(field) {
   const n = field.units.length;
   return `
-    <section class="field-stage" data-field="${field.category}" data-count="${n}">
-      <div class="field-stage-inner">
-        <div class="container">
-          <div class="field-stage-head">
-            <div class="container" style="padding-inline:0">
-              <h2 id="${field.category}-nav">${field.categoryLabel}</h2>
-              <span class="field-count">${String(n).padStart(2, "0")} projects</span>
-            </div>
-          </div>
-          <div class="stage-slides">${field.units.map((u, i) => renderStageSlide(u, field, i)).join("")}</div>
-          ${n > 1 ? `<div class="stage-progress">${field.units.map((_, i) => `<span class="${i === 0 ? "is-active" : ""}"></span>`).join("")}</div>` : ""}
+    <section class="field-stage" data-field="${field.category}">
+      <div class="container">
+        <div class="field-stage-head">
+          <h2 id="${field.category}-nav">${field.categoryLabel}</h2>
+          <span class="field-count">${String(n).padStart(2, "0")} projects</span>
         </div>
+        <div class="stage-slides">${field.units.map((u, i) => renderStageSlide(u, field, i)).join("")}</div>
       </div>
     </section>`;
-}
-
-function initFieldStages() {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const wide = window.matchMedia("(min-width: 901px)").matches;
-  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined" || reduced || !wide) return;
-
-  document.querySelectorAll(".field-stage").forEach((stage) => {
-    const n = parseInt(stage.getAttribute("data-count"), 10);
-    if (n < 2) return;
-    stage.classList.add("is-pinned-mode");
-
-    const slides = stage.querySelectorAll(".stage-slide");
-    const dots = stage.querySelectorAll(".stage-progress span");
-    let current = 0;
-
-    ScrollTrigger.create({
-      trigger: stage,
-      start: "top top",
-      end: "+=" + n * 85 + "%",
-      pin: stage.querySelector(".field-stage-inner"),
-      scrub: 0.4,
-      onUpdate: (self) => {
-        const idx = Math.min(n - 1, Math.floor(self.progress * n));
-        if (idx === current) return;
-        const forward = idx > current;
-        const prevSlide = slides[current];
-        const nextSlide = slides[idx];
-        prevSlide.classList.remove("is-active");
-        nextSlide.classList.add("is-active");
-        gsap.set(prevSlide, { position: "absolute" });
-        gsap.fromTo(
-          nextSlide.querySelector(".stage-img"),
-          { scale: forward ? 1.12 : 0.88, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.55, ease: "power2.out" }
-        );
-        gsap.fromTo(
-          nextSlide.querySelector(".stage-text"),
-          { y: forward ? 18 : -18, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
-        );
-        dots.forEach((d, i) => d.classList.toggle("is-active", i === idx));
-        current = idx;
-      },
-    });
-  });
 }
 
 document.getElementById("work-intro").innerHTML = `
@@ -120,6 +78,5 @@ window.addEventListener("load", function () {
   initHeadingReveals();
   initFadeUps();
   initTilt();
-  initFieldStages();
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });

@@ -21,14 +21,13 @@ function renderAbout() {
       <div class="about-grid">
         <div class="about-copy" data-reveal>
           <p>I engineer solutions from the ground up&mdash;identifying problems, designing, prototyping, manufacturing, and delivering fully realized products.</p>
-          <p>Proven project management record, delivering <strong>40+ projects</strong> on time and within budget across multiple sectors &mdash; from medical devices to telecom field equipment, environmental monitoring, and robotics.</p>
+          <p>Proven project management record, delivering <strong>60+ projects</strong> on time and within budget across multiple sectors &mdash; from medical devices to telecom field equipment, environmental monitoring, and robotics.</p>
           <p>Driven self-learner with strong reasoning and articulate presentation. Passionate, relentless, and fears nothing.</p>
           <p class="about-offduty">When I&rsquo;m not designing, I&rsquo;m usually building something, riding my motorcycle, or in the gym training.</p>
         </div>
         <div class="about-stats" data-reveal>
-          <div class="stat"><span class="stat-num">40+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
+          <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
           <div class="stat"><span class="stat-num">18</span><span class="stat-label">Featured builds across 5 sectors</span></div>
-          <div class="stat"><span class="stat-num">CSWP</span><span class="stat-label">Certified SOLIDWORKS Professional</span></div>
         </div>
       </div>
     </div>`;
