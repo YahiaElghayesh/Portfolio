@@ -4,7 +4,7 @@ function renderHero() {
   document.getElementById("hero-content").innerHTML = `
     <span class="kicker">Hardware &amp; Product Design Engineer</span>
     <h1 data-reveal-text>Yahia Elghayesh</h1>
-    <p class="hero-lede">I design, build, and ship precision hardware — medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation.</p>
+    <p class="hero-lede">I design, build, and ship precision hardware: medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation.</p>
     <div class="hero-links">
       <a class="primary" data-magnetic href="work.html">View the work</a>
       <a data-magnetic href="#contact">Get in touch</a>
@@ -56,12 +56,12 @@ function renderWorkshop() {
     <div class="container">
       <div class="section-head" data-reveal>
         <h2 data-reveal-text>In the workshop</h2>
-        <p>Most of these projects started on this bench — machining, wiring, and assembling the same hardware that ends up shipped to clients and deployed in the field.</p>
+        <p>Most of these projects started on this bench, machining, wiring, and assembling the same hardware that ends up shipped to clients and deployed in the field.</p>
       </div>
       <div class="workshop-lead" data-reveal>
         <div class="photo-frame"><img src="assets/img/workshop-overview.webp" alt="Yahia's home workshop, tool wall and workbench"></div>
         <div>
-          <p class="measure" style="color:var(--ink-2)">A working shop, not a showroom — the pegboard, the miter station, and the parts bins that every prototype above passes through before it ships.</p>
+          <p class="measure" style="color:var(--ink-2)">A working shop, not a showroom: the pegboard, the miter station, and the parts bins that every prototype above passes through before it ships.</p>
         </div>
       </div>
       <div class="workshop-strip">
@@ -91,7 +91,7 @@ function renderWorkCta() {
   document.getElementById("work-cta-section").innerHTML = `
     <div class="container work-cta" data-reveal>
       <h2 data-reveal-text>See the work</h2>
-      <a class="cta-link" data-magnetic href="work.html">Featured projects, by field <span class="arrow">&rarr;</span></a>
+      <a class="cta-link" data-magnetic href="work.html">View the work <span class="arrow">&rarr;</span></a>
     </div>`;
 }
 

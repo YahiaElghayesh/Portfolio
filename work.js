@@ -10,7 +10,7 @@ function renderVersionHistory(unit) {
       ${older
         .map(
           (v) => `<div class="vh-item">
-            <div class="vh-label">${v.versionLabel} — ${v.title}</div>
+            <div class="vh-label">${v.versionLabel}: ${v.title}</div>
             <p>${v.desc}</p>
           </div>`
         )
@@ -27,7 +27,6 @@ function renderStageSlide(unit, field, i) {
     <div class="stage-grid">
       ${renderStageVisual(hero, unit.title)}
       <div class="stage-text">
-        <span class="p-field">${field.categoryLabel}</span>
         <h3>${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</h3>
         <div class="stage-body">
           <p>${latest.desc}</p>

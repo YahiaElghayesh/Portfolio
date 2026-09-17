@@ -85,27 +85,6 @@ function initTilt(root) {
   });
 }
 
-// Custom cursor dot that grows over interactive/hoverable elements.
-function initCursor() {
-  if (isCoarsePointer) return;
-  var dot = document.createElement("div");
-  dot.className = "cursor-dot";
-  document.body.appendChild(dot);
-  var x = 0, y = 0, cx = 0, cy = 0;
-  window.addEventListener("mousemove", function (e) { x = e.clientX; y = e.clientY; });
-  (function tick() {
-    cx += (x - cx) * 0.2;
-    cy += (y - cy) * 0.2;
-    var scale = dot.classList.contains("is-hover") ? 5.75 : 1;
-    dot.style.transform = "translate(" + cx + "px," + cy + "px) translate(-50%,-50%) scale(" + scale + ")";
-    requestAnimationFrame(tick);
-  })();
-  document.querySelectorAll("a, button, [data-tilt]").forEach(function (el) {
-    el.addEventListener("mouseenter", function () { dot.classList.add("is-hover"); });
-    el.addEventListener("mouseleave", function () { dot.classList.remove("is-hover"); });
-  });
-}
-
 // Magnetic pull for primary links/buttons.
 function initMagnetic(root) {
   if (prefersReduced || isCoarsePointer) return;
@@ -145,5 +124,4 @@ function initHeroParallax() {
 
 document.addEventListener("DOMContentLoaded", function () {
   initSmoothScroll();
-  initCursor();
 });

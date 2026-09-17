@@ -1,18 +1,19 @@
 /* ============================================================
-   Tokens — warm neutral, sampled from the real studio photography
+   Tokens — Black and Tan: off-black ground, warm tan accent,
+   sharp contrast, no beige/brass. See DESIGN.md for why.
    ============================================================ */
 :root {
-  --bg: #eeece9;
-  --bg-deep: #e4e0da;
-  --bg-card: #f6f4f1;
-  --ink: #17181a;
-  --ink-2: #57544e;
-  --ink-3: #8a857c;
-  --line: #d9d4cc;
-  --line-strong: #c2bcb1;
-  --accent: #8a5a2b;
-  --accent-deep: #5c3a1c;
-  --accent-soft: #ecdfcd;
+  --bg: #14120f;
+  --bg-deep: #0d0b09;
+  --bg-card: #221f19;
+  --ink: #f2ede6;
+  --ink-2: #b8afa3;
+  --ink-3: #847c70;
+  --line: #2c2822;
+  --line-strong: #3d372f;
+  --accent: #cf9d5c;
+  --accent-deep: #e8c088;
+  --accent-soft: #3a2f1f;
 
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
@@ -82,19 +83,6 @@ svg { display: block; }
 }
 .skip-link:focus { top: var(--space-4); }
 
-/* ============================================================
-   Custom cursor (desktop, fine pointer only)
-   ============================================================ */
-.cursor-dot {
-  position: fixed; top: 0; left: 0; width: 8px; height: 8px;
-  border-radius: 50%; background: var(--accent);
-  pointer-events: none; z-index: 999; mix-blend-mode: multiply;
-  transform: translate(-50%, -50%) scale(1);
-  transition: transform var(--dur) var(--ease), opacity var(--dur) ease;
-  will-change: transform;
-}
-.cursor-dot.is-hover { transform: translate(-50%, -50%) scale(5.75); }
-@media (hover: none), (pointer: coarse) { .cursor-dot { display: none; } }
 
 /* ============================================================
    Layout
@@ -175,18 +163,38 @@ svg { display: block; }
 .hero-photo-wrap {
   position: absolute; inset: 0; z-index: 0;
 }
-.hero-photo-wrap img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 22% 60%;
+.hero-photo-wrap img,
+.hero-photo-wrap .hero-photo-tint {
+  position: absolute; inset: 0; width: 100%; height: 100%;
   -webkit-mask-image: linear-gradient(to right, black 55%, transparent 92%), linear-gradient(to bottom, black 80%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to right, black 55%, transparent 92%), linear-gradient(to bottom, black 80%, transparent 100%);
   mask-composite: intersect;
+}
+.hero-photo-wrap img {
+  object-fit: cover; object-position: 22% 60%;
   will-change: transform;
 }
+/* The source photo was shot on a light studio backdrop, which cannot be
+   pulled all the way down to true off-black without crushing the subject
+   to a silhouette. Rather than fake a seamless blend, this commits to an
+   even, subject-centered vignette: a deliberate lighting choice, not a
+   disguised seam. */
+.hero-photo-wrap .hero-photo-tint {
+  background: radial-gradient(
+    ellipse 85% 78% at 26% 58%,
+    transparent 0%,
+    transparent 20%,
+    color-mix(in srgb, var(--bg) 45%, transparent) 48%,
+    color-mix(in srgb, var(--bg) 78%, transparent) 68%,
+    var(--bg) 92%
+  );
+  pointer-events: none;
+}
 .hero-floor-shadow {
-  position: absolute; left: 8%; bottom: 8%; width: 30%; height: 6%;
-  background: radial-gradient(ellipse at center, rgba(20,18,15,0.28), transparent 70%);
-  filter: blur(6px); z-index: 1;
+  position: absolute; left: 6%; bottom: 4%; width: 34%; height: 30%;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%);
+  filter: blur(10px); z-index: 1;
 }
 .hero-content { position: relative; z-index: 2; max-width: 38rem; margin-left: min(36vw, 32rem); }
 .hero-content .kicker { color: var(--accent-deep); font-weight: 600; font-size: var(--fs-small); letter-spacing: 0.02em; }
@@ -202,18 +210,7 @@ svg { display: block; }
   transition: background var(--dur) ease, color var(--dur) ease, border-color var(--dur) ease;
 }
 .hero-links a.primary { background: var(--ink); color: var(--bg); }
-.hero-links a:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
-.hero-scroll-cue {
-  position: absolute; right: var(--page-pad); bottom: var(--space-5); z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
-  color: var(--ink-2); font-size: var(--fs-small);
-}
-.hero-scroll-cue .line { width: 1px; height: 2.5rem; background: var(--line-strong); position: relative; overflow: hidden; }
-.hero-scroll-cue .line::after {
-  content: ""; position: absolute; left: 0; top: -100%; width: 100%; height: 100%; background: var(--ink);
-  animation: scroll-cue 1.8s var(--ease) infinite;
-}
-@keyframes scroll-cue { to { top: 100%; } }
+.hero-links a:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 @media (max-width: 780px) {
   .hero {
     display: block; min-height: auto;
@@ -222,13 +219,13 @@ svg { display: block; }
   .hero-photo-wrap {
     position: relative; inset: auto; height: 46vh; min-height: 20rem;
   }
-  .hero-photo-wrap img {
-    object-position: 32% 30%;
+  .hero-photo-wrap img { object-position: 32% 30%; }
+  .hero-photo-wrap img,
+  .hero-photo-wrap .hero-photo-tint {
     mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
   }
   .hero-floor-shadow { display: none; }
-  .hero-scroll-cue { display: none; }
   .hero-content { margin-left: 0; max-width: none; margin-top: var(--space-5); }
 }
 
@@ -239,7 +236,13 @@ svg { display: block; }
 .toolbox-group h3 { font-size: var(--fs-small); font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-4); }
 .tool-list { display: flex; flex-direction: column; gap: var(--space-3); }
 .tool-item { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-small); }
-.tool-item .t-logo { width: 22px; height: 22px; object-fit: contain; }
+.tool-item .t-logo {
+  width: 22px; height: 22px; object-fit: contain;
+  /* Every vendor mark here is a black glyph on transparent (SVG currentColor
+     images do not inherit color, and the raster ones are baked black-on-
+     white too) — inverting reads them as light marks on the dark ground. */
+  filter: invert(0.92) brightness(1.15);
+}
 .tool-item .t-logo.is-empty { width: 22px; height: 22px; border-radius: 50%; background: var(--bg-deep); }
 .tool-item.has-certs { flex-wrap: wrap; }
 .cert-badges { display: flex; gap: var(--space-2); margin-left: calc(22px + var(--space-3)); margin-top: var(--space-2); flex-basis: 100%; }
@@ -295,10 +298,15 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
    Partners
    ============================================================ */
 .partners-grid { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; }
-.partner-item { display: flex; align-items: center; gap: var(--space-2); }
-.partner-item img { height: 24px; width: auto; max-width: 8.5rem; object-fit: contain; opacity: 0.7; transition: opacity var(--dur) ease; }
-.partner-item:hover img { opacity: 1; }
-.partner-item .flag { width: 16px; height: auto; border: 1px solid var(--line); flex: none; }
+.partner-item {
+  display: flex; align-items: center; gap: var(--space-3);
+  background: var(--ink); border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  transition: background var(--dur) ease;
+}
+.partner-item:hover { background: var(--accent-deep); }
+.partner-item img { height: 22px; width: auto; max-width: 7.5rem; object-fit: contain; }
+.partner-item .flag { width: 16px; height: auto; border: 1px solid var(--bg); border-radius: 2px; flex: none; }
 
 /* ============================================================
    Work page — field sections with scroll-scrubbed project stage
@@ -342,15 +350,19 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 .field-stage.is-pinned-mode .stage-slides { position: relative; height: auto; }
 .field-stage.is-pinned-mode .stage-slide { position: absolute; inset: 0; opacity: 0; }
 .field-stage.is-pinned-mode .stage-slide.is-active { position: relative; opacity: 1; }
+.stage-visual::before {
+  content: ""; position: absolute; left: 10%; right: 10%; bottom: 4%; height: 40%;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 16%, transparent), transparent 72%);
+  filter: blur(14px); z-index: 0;
+}
 .stage-visual .stage-img {
   position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: 100%;
-  width: auto; height: auto; object-fit: contain;
-  filter: drop-shadow(0 30px 40px rgba(30, 24, 15, 0.22));
+  width: auto; height: auto; object-fit: contain; z-index: 1;
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.5));
   will-change: transform, opacity;
 }
 .stage-visual .stage-img.is-context { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); filter: none; }
 .stage-text { position: relative; }
-.stage-text .p-field { font-size: var(--fs-small); color: var(--accent-deep); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
 .stage-text h3 { font-size: var(--fs-h1); font-weight: 600; letter-spacing: -0.02em; margin-top: var(--space-2); }
 .stage-text .subtitle { display: block; font-size: var(--fs-small); color: var(--ink-3); font-weight: 400; margin-top: 2px; }
 .stage-text .stage-body { margin-top: var(--space-4); color: var(--ink-2); max-width: 42rem; }
