@@ -2,12 +2,35 @@
 
 function renderHero() {
   document.getElementById("hero-content").innerHTML = `
-    <span class="kicker">Hardware &amp; Product Design Engineer</span>
+    <span class="kicker">Product Design &amp; Hardware Solutions</span>
     <h1 data-reveal-text>Yahia Elghayesh</h1>
-    <p class="hero-lede">I design, build, and ship precision hardware: medical devices, telecom test equipment, automation, environmental sensing, and research instrumentation.</p>
+    <p class="hero-lede hero-tagline">&ldquo;If it exists, I refine it. If it doesn&rsquo;t, I design it.&rdquo;</p>
+    <p class="hero-lede">I engineer solutions from the ground up &mdash; identifying problems, designing, prototyping, manufacturing, and delivering fully realized products across medical, telecom, environmental, and robotics sectors.</p>
     <div class="hero-links">
       <a class="primary" data-magnetic href="work.html">View the work</a>
       <a data-magnetic href="#contact">Get in touch</a>
+    </div>`;
+}
+
+function renderAbout() {
+  document.getElementById("about-section").innerHTML = `
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 data-reveal-text>Have you met Yahia Elghayesh?</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-copy" data-reveal>
+          <p>I engineer solutions from the ground up&mdash;identifying problems, designing, prototyping, manufacturing, and delivering fully realized products.</p>
+          <p>Proven project management record, delivering <strong>40+ projects</strong> on time and within budget across multiple sectors &mdash; from medical devices to telecom field equipment, environmental monitoring, and robotics.</p>
+          <p>Driven self-learner with strong reasoning and articulate presentation. Passionate, relentless, and fears nothing.</p>
+          <p class="about-offduty">When I&rsquo;m not designing, I&rsquo;m usually building something, riding my motorcycle, or in the gym training.</p>
+        </div>
+        <div class="about-stats" data-reveal>
+          <div class="stat"><span class="stat-num">40+</span><span class="stat-label">Projects delivered on time &amp; on budget</span></div>
+          <div class="stat"><span class="stat-num">18</span><span class="stat-label">Featured builds across 5 sectors</span></div>
+          <div class="stat"><span class="stat-num">CSWP</span><span class="stat-label">Certified SOLIDWORKS Professional</span></div>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -56,12 +79,11 @@ function renderWorkshop() {
     <div class="container">
       <div class="section-head" data-reveal>
         <h2 data-reveal-text>In the workshop</h2>
-        <p>Most of these projects started on this bench, machining, wiring, and assembling the same hardware that ends up shipped to clients and deployed in the field.</p>
       </div>
       <div class="workshop-lead" data-reveal>
         <div class="photo-frame"><img src="assets/img/workshop-overview.webp" alt="Yahia's home workshop, tool wall and workbench"></div>
         <div>
-          <p class="measure" style="color:var(--ink-2)">A working shop, not a showroom: the pegboard, the miter station, and the parts bins that every prototype above passes through before it ships.</p>
+          <p class="measure" style="color:var(--ink-2)">The workshop I began building at the age of <strong>eight</strong>.<br>A testament to my lifelong passion for designing, creating, and bringing ideas to life.</p>
         </div>
       </div>
       <div class="workshop-strip">
@@ -78,9 +100,12 @@ function renderPartners() {
       </div>
       <div class="partners-grid" data-reveal>
         ${PARTNERS.map(
-          (p) => `<a class="partner-item" href="${p.url}" target="_blank" rel="noopener">
-            <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
-            <img src="${p.logo}" alt="${p.name}">
+          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener">
+            <span class="partner-logo"><img src="${p.logo}" alt="${p.name}"></span>
+            <span class="partner-meta">
+              <span class="partner-name">${p.name}</span>
+              <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
+            </span>
           </a>`
         ).join("")}
       </div>
@@ -95,29 +120,14 @@ function renderWorkCta() {
     </div>`;
 }
 
-function renderContact() {
-  document.getElementById("contact-section").innerHTML = `
-    <div class="container contact-section" data-reveal>
-      <h2 data-reveal-text>Let's talk</h2>
-      <a class="contact-email" data-magnetic href="mailto:y.elghayesh@gmail.com">y.elghayesh@gmail.com</a>
-    </div>`;
-}
-
-function renderFooter() {
-  document.getElementById("site-footer").innerHTML = `
-    <div class="container footer-inner">
-      <span>&copy; ${new Date().getFullYear()} Yahia Elghayesh</span>
-      <a href="mailto:y.elghayesh@gmail.com">y.elghayesh@gmail.com</a>
-    </div>`;
-}
-
 renderHero();
+renderAbout();
 renderToolbox();
 renderWorkshop();
 renderPartners();
 renderWorkCta();
-renderContact();
-renderFooter();
+renderContact("contact-section");
+renderFooter("site-footer");
 
 window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);

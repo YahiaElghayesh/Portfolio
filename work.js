@@ -21,11 +21,11 @@ function renderVersionHistory(unit) {
 
 function renderStageSlide(unit, field, i) {
   const latest = unit.versions[0];
-  const hero = getHeroImage(unit, 0);
+  const gallery = getGalleryImages(unit, 0).slice(0, 6);
   const tags = PROJECT_TAGS[unit.id] || [];
   return `<article class="stage-slide${i === 0 ? " is-active" : ""}" data-slide="${i}" id="${unit.id}">
     <div class="stage-grid">
-      ${renderStageVisual(hero, unit.title)}
+      ${renderStageVisual(gallery, unit.title)}
       <div class="stage-text">
         <h3>${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</h3>
         <div class="stage-body">
@@ -112,11 +112,8 @@ document.getElementById("work-intro").innerHTML = `
 
 document.getElementById("field-stages-root").innerHTML = FIELDS.map(renderFieldStage).join("");
 
-document.getElementById("site-footer").innerHTML = `
-  <div class="container footer-inner">
-    <span>&copy; ${new Date().getFullYear()} Yahia Elghayesh</span>
-    <a href="mailto:y.elghayesh@gmail.com">y.elghayesh@gmail.com</a>
-  </div>`;
+renderContact("contact-section");
+renderFooter("site-footer");
 
 window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);

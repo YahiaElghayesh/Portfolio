@@ -222,6 +222,28 @@ function getHeroImage(unit, versionIndex) {
   return layout ? v.images[layout.hero] : pickHero(v.images);
 }
 
+// Every photo LAYOUTS deliberately places for this version, hero first, in the
+// order its blocks reference them — so the Work page can show the full curated
+// set per project instead of a single picked hero image. "versus" blocks compare
+// images across versions, not within this one, so they're not gallery photos here.
+function getGalleryImages(unit, versionIndex) {
+  const v = unit.versions[versionIndex || 0];
+  const layout = getLayout(unit.id, v.versionLabel);
+  if (!layout) return v.images.slice(0, 1);
+  const order = [layout.hero];
+  layout.blocks.forEach((b) => {
+    if (Array.isArray(b.images)) order.push(...b.images);
+  });
+  const seen = new Set();
+  const out = [];
+  order.forEach((i) => {
+    if (i == null || seen.has(i) || !v.images[i]) return;
+    seen.add(i);
+    out.push(v.images[i]);
+  });
+  return out.length ? out : v.images.slice(0, 1);
+}
+
 // ---------- Field lookup helpers (shared across pages) ----------
 function findFieldByCategory(cat) { return FIELDS.find(f => f.category === cat) || null; }
 function findUnitById(id) {

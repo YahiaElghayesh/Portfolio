@@ -102,22 +102,15 @@ function initMagnetic(root) {
   });
 }
 
-// Hero parallax: photo drifts slower than scroll, subtle mouse-parallax too.
+// Hero portrait: a faint mouse-parallax drift inside its frame.
 function initHeroParallax() {
-  var img = document.querySelector(".hero-photo-wrap img");
+  var img = document.querySelector(".hero-portrait img");
   if (!img) return;
-  if (typeof gsap !== "undefined" && !prefersReduced) {
-    gsap.to(img, {
-      yPercent: 12,
-      ease: "none",
-      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true },
-    });
-  }
   if (!isCoarsePointer && !prefersReduced) {
     document.querySelector(".hero").addEventListener("mousemove", function (e) {
       var px = e.clientX / window.innerWidth - 0.5;
       var py = e.clientY / window.innerHeight - 0.5;
-      img.style.transform = "translate(" + px * -14 + "px," + py * -10 + "px) scale(1.04)";
+      img.style.transform = "translate(" + px * -6 + "px," + py * -5 + "px) scale(1.05)";
     });
   }
 }
