@@ -99,12 +99,9 @@ function renderPartners() {
       </div>
       <div class="partners-grid" data-reveal>
         ${PARTNERS.map(
-          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener">
+          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener" title="${p.name}">
             <span class="partner-logo"><img src="${p.logo}" alt="${p.name}"></span>
-            <span class="partner-meta">
-              <span class="partner-name">${p.name}</span>
-              <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
-            </span>
+            <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
           </a>`
         ).join("")}
       </div>

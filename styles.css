@@ -282,17 +282,18 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
    visual scale regardless of its own file's aspect ratio. The grid reflows
    to however many columns fit the width, rather than a fixed column count. */
 .partners-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: var(--space-5); }
-.partner-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.partner-card { position: relative; display: block; }
 .partner-logo {
-  height: 6.5rem; display: flex; align-items: center; justify-content: center;
+  height: 8.5rem; display: flex; align-items: center; justify-content: center;
   background: var(--ink); border-radius: var(--radius); padding: var(--space-4);
   transition: transform var(--dur) ease, box-shadow var(--dur) ease;
 }
 .partner-card:hover .partner-logo { transform: translateY(-4px); box-shadow: 0 20px 36px -18px rgba(0,0,0,0.5); }
-.partner-logo img { max-width: 78%; max-height: 60%; width: auto; height: auto; object-fit: contain; }
-.partner-meta { display: flex; align-items: center; gap: var(--space-3); }
-.partner-meta .partner-name { color: var(--ink-2); font-size: var(--fs-small); }
-.partner-meta .flag { width: 16px; height: auto; border-radius: 2px; flex: none; margin-left: auto; }
+.partner-logo img { max-width: 85%; max-height: 78%; width: auto; height: auto; object-fit: contain; }
+.partner-card .flag {
+  position: absolute; right: 0.6rem; bottom: 0.6rem; width: 22px; height: auto;
+  border-radius: 3px; box-shadow: 0 0 0 2px var(--bg), 0 4px 10px rgba(0,0,0,0.4);
+}
 
 /* ============================================================
    Work page — field sections with scroll-scrubbed project stage
