@@ -85,6 +85,36 @@ function initTilt(root) {
   });
 }
 
+// Project photo galleries: clicking a thumbnail actually swaps the main
+// photo, with a quick crossfade — every curated shot is reachable, not just
+// visible as an inert row of tiles.
+function initGalleries(root) {
+  (root || document).querySelectorAll(".stage-visual.has-gallery").forEach(function (stage) {
+    var mainImg = stage.querySelector(".visual-main img");
+    stage.querySelectorAll(".visual-cell").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (btn.classList.contains("is-active")) return;
+        stage.querySelectorAll(".visual-cell").forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+        var src = btn.getAttribute("data-src");
+        var isCutoutImg = btn.getAttribute("data-kind") === "cutout";
+        var swap = function () {
+          mainImg.src = src;
+          mainImg.classList.toggle("is-context", !isCutoutImg);
+          if (typeof gsap !== "undefined" && !prefersReduced) {
+            gsap.fromTo(mainImg, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
+          }
+        };
+        if (typeof gsap !== "undefined" && !prefersReduced) {
+          gsap.to(mainImg, { opacity: 0, scale: 0.97, duration: 0.16, ease: "power1.in", onComplete: swap });
+        } else {
+          swap();
+        }
+      });
+    });
+  });
+}
+
 // Magnetic pull for primary links/buttons.
 function initMagnetic(root) {
   if (prefersReduced || isCoarsePointer) return;

@@ -78,5 +78,6 @@ window.addEventListener("load", function () {
   initHeadingReveals();
   initFadeUps();
   initTilt();
+  initGalleries();
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });

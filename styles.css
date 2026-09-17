@@ -276,12 +276,16 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 /* ============================================================
    Partners
    ============================================================ */
-.partners-grid { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-7) var(--space-8); }
+.partners-grid { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-6) var(--space-7); }
 .partner-card { display: flex; flex-direction: column; gap: var(--space-4); }
 .partner-logo { height: 3rem; display: flex; align-items: center; }
 .partner-logo img {
   max-height: 100%; max-width: 11rem; width: auto; object-fit: contain;
   transition: transform var(--dur) ease;
+  /* Logos are designed for a light background; on this dark one, a faint
+     glow keeps darker marks (navy, deep red) from disappearing entirely,
+     without boxing anything in a light panel. */
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.35)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.08));
 }
 .partner-card:hover .partner-logo img { transform: translateY(-3px); }
 .partner-meta {
@@ -292,6 +296,11 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 .partner-card:hover .partner-meta { border-color: var(--accent); }
 .partner-meta .partner-name { color: var(--ink-2); font-size: var(--fs-small); }
 .partner-meta .flag { width: 16px; height: auto; border-radius: 2px; flex: none; margin-left: auto; }
+@media (max-width: 560px) {
+  .partners-grid { gap: var(--space-5) var(--space-6); }
+  .partner-card { flex: 0 0 calc(50% - var(--space-6) / 2); }
+  .partner-logo img { max-width: 100%; }
+}
 
 /* ============================================================
    Work page — field sections with scroll-scrubbed project stage
@@ -339,8 +348,17 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 .stage-visual .visual-strip { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .stage-visual .visual-strip .visual-cell {
   position: relative; flex: 0 0 5.5rem; aspect-ratio: 1/1; border-radius: var(--radius-sm); overflow: hidden;
+  padding: 0; border: 1px solid var(--line); background: none; cursor: pointer;
+  transition: transform var(--dur) ease, border-color var(--dur) ease, box-shadow var(--dur) ease;
 }
-.stage-visual .visual-strip .visual-cell img { width: 100%; height: 100%; object-fit: cover; }
+.stage-visual .visual-strip .visual-cell:hover,
+.stage-visual .visual-strip .visual-cell:focus-visible { transform: translateY(-3px); border-color: var(--accent); }
+.stage-visual .visual-strip .visual-cell.is-active {
+  border-color: var(--accent-deep);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-deep) 55%, transparent);
+}
+.stage-visual .visual-strip .visual-cell img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur) ease; }
+.stage-visual .visual-strip .visual-cell:hover img { transform: scale(1.08); }
 .stage-visual .visual-strip .visual-cell.is-cutout {
   display: flex; align-items: center; justify-content: center;
   background: var(--bg-deep);
@@ -349,6 +367,7 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
   width: auto; height: 100%; object-fit: contain; padding: var(--space-2);
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.45));
 }
+.stage-visual .visual-strip .visual-cell.is-cutout:hover img { transform: scale(1.12); }
 .stage-visual .visual-main::before {
   content: ""; position: absolute; left: 10%; right: 10%; bottom: 4%; height: 40%;
   background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 16%, transparent), transparent 72%);

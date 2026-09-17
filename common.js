@@ -19,16 +19,19 @@ function renderVisualMain(image, alt) {
   </div>`;
 }
 
-function renderVisualThumb(image, alt) {
+// A real button, not a static tile: clicking it swaps the main photo (see
+// initGalleries in motion.js) so every curated shot is actually reachable,
+// not just visible as a row of flat thumbnails.
+function renderVisualThumb(image, alt, i) {
   const cls = isCutout(image) ? "is-cutout" : "is-context";
-  return `<div class="visual-cell ${cls}">
-    <img src="${image.file}" alt="${alt || ""}">
-  </div>`;
+  return `<button type="button" class="visual-cell ${cls}" data-src="${image.file}" data-kind="${image.kind}" aria-label="Show photo ${i + 2} of ${alt || "this project"}">
+    <img src="${image.file}" alt="">
+  </button>`;
 }
 
 // Renders the full curated set of photos LAYOUTS assigns a project (see
-// getGalleryImages in data.js) as one deliberate hero shot plus a thumbnail
-// strip of the rest — never just a single picked image.
+// getGalleryImages in data.js) as one deliberate hero shot plus a clickable
+// thumbnail strip of the rest — never just a single picked image.
 function renderStageVisual(images, alt) {
   const list = Array.isArray(images) ? images : [images];
   if (!list.length || !list[0]) return "";
@@ -36,7 +39,7 @@ function renderStageVisual(images, alt) {
   if (!rest.length) return `<div class="stage-visual">${renderVisualMain(main, alt)}</div>`;
   return `<div class="stage-visual has-gallery">
     ${renderVisualMain(main, alt)}
-    <div class="visual-strip">${rest.map((img) => renderVisualThumb(img, alt)).join("")}</div>
+    <div class="visual-strip">${rest.map((img, i) => renderVisualThumb(img, alt, i)).join("")}</div>
   </div>`;
 }
 
