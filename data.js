@@ -38,7 +38,7 @@ const TOOLBOX = [
       { name: "Fusion 360", logo: "assets/img/logos/fusion360.webp" },
       { name: "AutoCAD", logo: "assets/img/logos/autocad.svg" },
       { name: "Meshmixer", logo: "assets/img/logos/meshmixer.webp" },
-      { name: "Inventor", logo: null },
+      { name: "Inventor", logo: "assets/img/logos/autodesk.svg" },
     ], detail: "" },
   { name: "Electronics & PCB Design", tools: [
       { name: "Altium Designer", logo: "assets/img/logos/altium.webp" },

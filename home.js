@@ -40,6 +40,7 @@ function renderToolbox() {
         <h2 data-reveal-text>Toolbox</h2>
         <p>The software and certifications behind every project below.</p>
       </div>
+      <div class="toolbox-panel">
       <div class="toolbox-grid">
         ${TOOLBOX.map(
           (group) => `<div class="toolbox-group" data-reveal>
@@ -69,6 +70,7 @@ function renderToolbox() {
             </div>
           </div>`
         ).join("")}
+      </div>
       </div>
     </div>`;
 }

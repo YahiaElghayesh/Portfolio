@@ -3,9 +3,12 @@
 var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var isCoarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
+var lenisInstance = null;
+
 function initSmoothScroll() {
   if (prefersReduced || typeof Lenis === "undefined") return null;
   var lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+  lenisInstance = lenis;
   document.documentElement.classList.add("has-smooth-scroll");
   function raf(time) {
     lenis.raf(time);
@@ -17,25 +20,32 @@ function initSmoothScroll() {
     gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
   }
-
-  // Lenis owns scroll position via its own RAF loop, so a plain native
-  // "#hash" jump (back to top, field nav, #contact) gets silently fought
-  // and undone the next frame. Anchor clicks need to go through Lenis.
-  document.addEventListener("click", function (e) {
-    var link = e.target.closest('a[href^="#"]');
-    if (!link) return;
-    var id = link.getAttribute("href").slice(1);
-    // "#top" points at the fixed header, which has no meaningful document
-    // position to scroll to — treat it as "scroll to the very top" instead.
-    var target = id === "top" || !id ? 0 : document.getElementById(id);
-    if (target === undefined || target === null) return;
-    e.preventDefault();
-    lenis.scrollTo(target, { offset: 0 });
-    history.pushState(null, "", id ? "#" + id : location.pathname);
-  });
-
   return lenis;
 }
+
+// Same-page "#hash" links, handled once, independent of whether Lenis is
+// active. Two real bugs otherwise: (1) when Lenis IS running it owns scroll
+// position via its own RAF loop, so a plain native jump gets silently
+// fought and undone the next frame; (2) "#top" targets the fixed header,
+// which has no meaningful document position for a *native* jump to resolve
+// (fixed elements sit outside document flow) — that's broken with or
+// without Lenis, so it's special-cased to "scroll to 0" either way.
+document.addEventListener("click", function (e) {
+  var link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+  var id = link.getAttribute("href").slice(1);
+  var toTop = id === "top" || !id;
+  var target = toTop ? 0 : document.getElementById(id);
+  if (target === undefined || target === null) return;
+  e.preventDefault();
+  if (lenisInstance) {
+    lenisInstance.scrollTo(target, { offset: 0 });
+  } else {
+    var y = toTop ? 0 : target.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: y, behavior: prefersReduced ? "auto" : "smooth" });
+  }
+  history.pushState(null, "", id ? "#" + id : location.pathname);
+});
 
 // Splits text into per-line spans (no paid plugin) and reveals them on scroll.
 function splitLines(el) {
