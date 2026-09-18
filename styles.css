@@ -337,6 +337,10 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 .tile-visual.is-cutout img { max-width: 78%; max-height: 78%; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 14px 20px rgba(0,0,0,0.45)); }
 .tile-title { display: block; padding: var(--space-4) var(--space-5); font-weight: 600; }
 .tile-title .subtitle { display: block; margin-top: 2px; font-size: var(--fs-small); font-weight: 400; color: var(--ink-3); }
+.tile-versions {
+  display: block; margin: calc(var(--space-4) * -1) var(--space-5) var(--space-4);
+  font-size: var(--fs-small); font-weight: 600; color: var(--accent-deep);
+}
 
 /* ---------------- Project detail modal ---------------- */
 .project-modal {

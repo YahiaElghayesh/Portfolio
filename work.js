@@ -5,11 +5,19 @@ function renderTileVisual(image, alt) {
   return `<span class="tile-visual ${cls}"><img src="${image.file}" alt="${alt || ""}"></span>`;
 }
 
+// Versions are visible from the menu itself, not just once you're inside a
+// project — every version label shown right on its tile.
+function renderTileVersions(unit) {
+  if (unit.versions.length < 2) return "";
+  return `<span class="tile-versions">${unit.versions.map((v) => v.versionLabel).join(" &middot; ")}</span>`;
+}
+
 function renderProjectTile(unit) {
   const hero = getHeroImage(unit, 0);
   return `<button type="button" class="project-tile" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog" data-reveal>
     ${renderTileVisual(hero, unit.title)}
     <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
+    ${renderTileVersions(unit)}
   </button>`;
 }
 
