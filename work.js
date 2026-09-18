@@ -1,51 +1,16 @@
-// ---------- Work (work.html): projects as clearly compartmentalized cards ----------
+// ---------- Work (work.html): a menu of projects, click one for full detail ----------
 
-// Version history is always visible, never hidden behind a click: the current
-// version reads as the project's main text, older ones list below it as their
-// own labeled entries, so it's obvious right away that revisions exist.
-function renderVersionHistory(unit) {
-  const [current, ...older] = unit.versions;
-  if (!older.length) return "";
-  return `<div class="version-history">
-    <div class="vh-head">
-      <span class="vh-badge is-current">${current.versionLabel}</span>
-      <span class="vh-head-label">Current &middot; ${older.length} earlier revision${older.length > 1 ? "s" : ""} below</span>
-    </div>
-    <div class="vh-list">
-      ${older
-        .map(
-          (v) => `<div class="vh-item">
-            <span class="vh-badge">${v.versionLabel}</span>
-            <div class="vh-item-body">
-              <div class="vh-label">${v.title}</div>
-              <p>${v.desc}</p>
-            </div>
-          </div>`
-        )
-        .join("")}
-    </div>
-  </div>`;
+function renderTileVisual(image, alt) {
+  const cls = isCutout(image) ? "is-cutout" : "is-context";
+  return `<span class="tile-visual ${cls}"><img src="${image.file}" alt="${alt || ""}"></span>`;
 }
 
-function renderStageSlide(unit, field, i) {
-  const latest = unit.versions[0];
-  const gallery = getGalleryImages(unit, 0).slice(0, 6);
-  const tags = PROJECT_TAGS[unit.id] || [];
-  return `<article class="stage-slide" id="${unit.id}" data-reveal>
-    <span class="stage-index">${String(i + 1).padStart(2, "0")}</span>
-    <div class="stage-grid">
-      ${renderStageVisual(gallery, unit.title)}
-      <div class="stage-text">
-        <h3>${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</h3>
-        <div class="stage-body">
-          <p>${latest.desc}</p>
-          <ul>${latest.highlights.map((h) => `<li>${h}</li>`).join("")}</ul>
-        </div>
-        <div class="stage-tags">${tags.map((t) => `<span class="tag">${t}</span>`).join("")}</div>
-        ${renderVersionHistory(unit)}
-      </div>
-    </div>
-  </article>`;
+function renderProjectTile(unit) {
+  const hero = getHeroImage(unit, 0);
+  return `<button type="button" class="project-tile" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog" data-reveal>
+    ${renderTileVisual(hero, unit.title)}
+    <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
+  </button>`;
 }
 
 function renderFieldStage(field) {
@@ -57,10 +22,89 @@ function renderFieldStage(field) {
           <h2 id="${field.category}-nav">${field.categoryLabel}</h2>
           <span class="field-count">${String(n).padStart(2, "0")} projects</span>
         </div>
-        <div class="stage-slides">${field.units.map((u, i) => renderStageSlide(u, field, i)).join("")}</div>
+        <div class="project-grid">${field.units.map(renderProjectTile).join("")}</div>
       </div>
     </section>`;
 }
+
+// Versions get the same visual weight as the project itself: real tabs that
+// swap in that version's own full title, description, highlights, and
+// photos — never a compressed footnote under the current one.
+function renderVersionTabs(unit, activeIndex) {
+  if (unit.versions.length < 2) return "";
+  return `<div class="version-tabs" role="tablist">
+    ${unit.versions
+      .map(
+        (v, i) =>
+          `<button type="button" class="version-tab${i === activeIndex ? " is-active" : ""}" role="tab" aria-selected="${i === activeIndex}" data-version-index="${i}">${v.versionLabel}${i === 0 ? " &middot; Current" : ""}</button>`
+      )
+      .join("")}
+  </div>`;
+}
+
+function renderProjectDetail(unit, versionIndex) {
+  const idx = versionIndex || 0;
+  const v = unit.versions[idx];
+  const gallery = getGalleryImages(unit, idx).slice(0, 6);
+  return `
+    <h3 class="detail-title" id="project-modal-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</h3>
+    ${renderVersionTabs(unit, idx)}
+    <div class="stage-grid">
+      ${renderStageVisual(gallery, unit.title)}
+      <div class="stage-text">
+        <div class="stage-body">
+          <p>${v.desc}</p>
+          <ul>${v.highlights.map((h) => `<li>${h}</li>`).join("")}</ul>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ---------- Modal open/close + version switching ----------
+const modal = document.getElementById("project-modal");
+const modalBody = document.getElementById("project-modal-body");
+let lastFocused = null;
+
+function paintDetail(unit, versionIndex) {
+  modalBody.innerHTML = renderProjectDetail(unit, versionIndex);
+  modal.querySelector(".project-modal-panel").scrollTop = 0;
+  initGalleries(modalBody);
+  initTilt(modalBody);
+  modalBody.querySelectorAll(".version-tab").forEach((tab) => {
+    tab.addEventListener("click", () => paintDetail(unit, parseInt(tab.getAttribute("data-version-index"), 10)));
+  });
+}
+
+function openProject(unitId, focusOrigin) {
+  const found = findUnitById(unitId);
+  if (!found) return;
+  lastFocused = focusOrigin || document.activeElement;
+  paintDetail(found.unit, 0);
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  modal.querySelector(".project-modal-close").focus();
+  if (location.hash !== "#" + unitId) history.replaceState(null, "", "#" + unitId);
+}
+
+function closeProject() {
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+}
+
+document.addEventListener("click", (e) => {
+  const tile = e.target.closest(".project-tile");
+  if (tile) {
+    openProject(tile.getAttribute("data-unit"), tile);
+    return;
+  }
+  if (e.target.closest("[data-modal-close]")) closeProject();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modal.classList.contains("is-open")) closeProject();
+});
 
 document.getElementById("work-intro").innerHTML = `
   <div class="container">
@@ -73,11 +117,16 @@ document.getElementById("field-stages-root").innerHTML = FIELDS.map(renderFieldS
 renderContact("contact-section");
 renderFooter("site-footer");
 
+// Arriving via a work.html#unit-id link opens that project's detail directly.
+if (location.hash) {
+  const unitId = location.hash.slice(1);
+  if (findUnitById(unitId)) openProject(unitId, document.getElementById(unitId));
+}
+
 window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);
   initHeadingReveals();
   initFadeUps();
   initTilt();
-  initGalleries();
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });

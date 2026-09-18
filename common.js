@@ -11,17 +11,17 @@ function isCutout(image) {
 function renderVisualMain(image, alt) {
   if (isCutout(image)) {
     return `<div class="visual-main" data-tilt-frame>
-      <img class="stage-img" data-tilt="10" src="${image.file}" alt="${alt || ""}">
+      <img class="stage-img" data-tilt="10" data-kind="cutout" src="${image.file}" alt="${alt || ""}">
     </div>`;
   }
   return `<div class="visual-main">
-    <img class="stage-img is-context" src="${image.file}" alt="${alt || ""}">
+    <img class="stage-img is-context" data-kind="${image.kind}" src="${image.file}" alt="${alt || ""}">
   </div>`;
 }
 
-// A real button, not a static tile: clicking it swaps the main photo (see
-// initGalleries in motion.js) so every curated shot is actually reachable,
-// not just visible as a row of flat thumbnails.
+// A real button, not a static tile: clicking it swaps places with the main
+// photo (see initGalleries in motion.js), so every curated shot — including
+// whatever was showing before — stays one click away, never stranded.
 function renderVisualThumb(image, alt, i) {
   const cls = isCutout(image) ? "is-cutout" : "is-context";
   return `<button type="button" class="visual-cell ${cls}" data-src="${image.file}" data-kind="${image.kind}" aria-label="Show photo ${i + 2} of ${alt || "this project"}">
@@ -40,6 +40,7 @@ function renderStageVisual(images, alt) {
   return `<div class="stage-visual has-gallery">
     ${renderVisualMain(main, alt)}
     <div class="visual-strip">${rest.map((img, i) => renderVisualThumb(img, alt, i)).join("")}</div>
+    <p class="visual-hint">Tap a photo to bring it forward</p>
   </div>`;
 }
 

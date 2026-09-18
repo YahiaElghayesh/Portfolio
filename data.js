@@ -182,25 +182,6 @@ const LAYOUTS = {
   ]},
 };
 
-// ---------- Discipline tags per unit, drawn directly from that project's own highlights/desc ----------
-const PROJECT_TAGS = {
-  "neurosurgery-frame": ["Precision Mechanisms", "Medical Device Design"],
-  "skycare-kit": ["Enclosure Design", "Electronics Integration"],
-  "smart-mirror": ["Mechanical Integration", "Charging Systems"],
-  "inos-watcher": ["Thermal Management", "Weatherproof Enclosure"],
-  "inos-lite": ["Wearable System Design", "Power Management"],
-  "inos-air": ["Modular Mounting", "Drone Integration"],
-  "inos-gauge": ["Power Distribution", "Vehicle Integration"],
-  "long-range-benchmark": ["Power Systems", "Field-Rugged Design"],
-  "general-benchmark": ["Cost-Optimized Design", "Rapid Prototyping"],
-  "ophthalmic-cell": ["Robotics & Automation", "Cobot Tooling"],
-  "minesweeping-robot": ["Autonomous Robotics", "Suspension Design"],
-  "water-quality-sonde": ["Sensor Integration", "Chemical-Resistant Materials"],
-  "rain-monitoring": ["Off-Grid Solar Power", "Environmental Sensing"],
-  "exhaust-gas-sampler": ["Gas Conditioning", "Sensor Calibration"],
-  "gpr": ["RF & PCB Design", "Antenna Design"],
-};
-
 function getLayout(unitId, versionLabel) {
   const entry = LAYOUTS[unitId];
   if (!entry) return null;

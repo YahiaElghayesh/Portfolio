@@ -85,22 +85,24 @@ function initTilt(root) {
   });
 }
 
-// Project photo galleries: clicking a thumbnail actually swaps the main
-// photo, with a quick crossfade — every curated shot is reachable, not just
-// visible as an inert row of tiles.
+// Project photo galleries: clicking a thumbnail trades places with the main
+// photo — the photo that was in main moves into that thumbnail's spot — so
+// whatever was showing before is always one more click away, never stranded.
 function initGalleries(root) {
   (root || document).querySelectorAll(".stage-visual.has-gallery").forEach(function (stage) {
     var mainImg = stage.querySelector(".visual-main img");
     stage.querySelectorAll(".visual-cell").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        if (btn.classList.contains("is-active")) return;
-        stage.querySelectorAll(".visual-cell").forEach(function (b) { b.classList.remove("is-active"); });
-        btn.classList.add("is-active");
-        var src = btn.getAttribute("data-src");
-        var isCutoutImg = btn.getAttribute("data-kind") === "cutout";
+        var newSrc = btn.getAttribute("data-src");
+        var newKind = btn.getAttribute("data-kind");
+        var oldSrc = mainImg.getAttribute("src");
+        var oldKind = mainImg.getAttribute("data-kind");
+        var thumbImg = btn.querySelector("img");
+
         var swap = function () {
-          mainImg.src = src;
-          mainImg.classList.toggle("is-context", !isCutoutImg);
+          mainImg.src = newSrc;
+          mainImg.setAttribute("data-kind", newKind);
+          mainImg.classList.toggle("is-context", newKind !== "cutout");
           if (typeof gsap !== "undefined" && !prefersReduced) {
             gsap.fromTo(mainImg, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
           }
@@ -110,6 +112,12 @@ function initGalleries(root) {
         } else {
           swap();
         }
+
+        thumbImg.src = oldSrc;
+        btn.setAttribute("data-src", oldSrc);
+        btn.setAttribute("data-kind", oldKind);
+        btn.classList.toggle("is-cutout", oldKind === "cutout");
+        btn.classList.toggle("is-context", oldKind !== "cutout");
       });
     });
   });

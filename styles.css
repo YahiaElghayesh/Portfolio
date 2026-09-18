@@ -316,24 +316,71 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 .field-stage-head h2 { font-size: var(--fs-h2); font-weight: 600; }
 .field-stage-head .field-count { font-size: var(--fs-small); color: var(--ink-3); }
 
-/* Every project is its own bounded, numbered card — a clear compartment with
-   a visible start and end, never a single continuous scroll of ambiguous
-   length. */
-.stage-slides { display: flex; flex-direction: column; gap: var(--space-6); }
-.stage-slide {
-  position: relative; width: 100%;
+/* The Work page is a menu, not a scroll of unknown length: every field is a
+   grid of tiles (photo + title). Clicking one opens the full detail — desc,
+   highlights, gallery, versions — in a modal. */
+.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: var(--space-5); }
+.project-tile {
+  display: block; text-align: left; width: 100%;
+  background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; cursor: pointer;
+  transition: transform var(--dur) ease, border-color var(--dur) ease, box-shadow var(--dur) ease;
+}
+.project-tile:hover, .project-tile:focus-visible {
+  transform: translateY(-4px); border-color: var(--line-strong);
+  box-shadow: 0 24px 44px -22px rgba(0,0,0,0.55);
+}
+.tile-visual { position: relative; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.tile-visual img { transition: transform var(--dur) ease; }
+.project-tile:hover .tile-visual img { transform: scale(1.05); }
+.tile-visual.is-context img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tile-visual.is-cutout img { max-width: 78%; max-height: 78%; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 14px 20px rgba(0,0,0,0.45)); }
+.tile-title { display: block; padding: var(--space-4) var(--space-5); font-weight: 600; }
+.tile-title .subtitle { display: block; margin-top: 2px; font-size: var(--fs-small); font-weight: 400; color: var(--ink-3); }
+
+/* ---------------- Project detail modal ---------------- */
+.project-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: var(--space-5);
+  opacity: 0; visibility: hidden; transition: opacity var(--dur) ease, visibility 0s var(--dur);
+}
+.project-modal.is-open { opacity: 1; visibility: visible; transition: opacity var(--dur) ease; }
+.project-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); }
+.project-modal-panel {
+  position: relative; z-index: 1; width: 100%; max-width: 64rem; max-height: 88vh; overflow-y: auto;
   background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
   padding: var(--space-6);
 }
-.stage-index {
-  display: block; font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.05em;
-  color: var(--ink-3); margin-bottom: var(--space-5);
+.project-modal-close {
+  position: absolute; top: var(--space-4); right: var(--space-4); z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem;
+  border-radius: 50%; background: var(--bg-deep); border: 1px solid var(--line);
+  color: var(--ink); font-size: 1.3rem; line-height: 1; cursor: pointer;
 }
+.project-modal-close:hover { border-color: var(--accent); color: var(--accent); }
+body.modal-open { overflow: hidden; }
+
+.detail-title { font-size: var(--fs-h1); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; padding-bottom: 0.08em; }
+.detail-title .subtitle { display: block; margin-top: var(--space-2); font-size: var(--fs-small); color: var(--ink-3); font-weight: 400; }
+
+/* Versions get the same visual weight as the project itself: real tabs, not
+   a footnote — selecting one swaps in that version's own full text and its
+   own photos. */
+.version-tabs { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+.version-tab {
+  font-size: var(--fs-small); font-weight: 600; color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 999px; padding: 0.5em 1.1em;
+  transition: border-color var(--dur) ease, color var(--dur) ease, background var(--dur) ease;
+}
+.version-tab:hover { border-color: var(--ink); color: var(--ink); }
+.version-tab.is-active { background: var(--accent-deep); border-color: transparent; color: var(--bg); }
+
 .stage-grid {
   display: grid; grid-template-columns: 1fr;
-  gap: var(--space-5); align-items: center; width: 100%;
+  gap: var(--space-5); align-items: center; width: 100%; margin-top: var(--space-6);
 }
-@media (min-width: 901px) {
+@media (min-width: 820px) {
   .stage-grid { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: var(--space-7); }
 }
 .stage-visual { display: flex; flex-direction: column; gap: var(--space-4); }
@@ -341,15 +388,11 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 .stage-visual .visual-strip { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .stage-visual .visual-strip .visual-cell {
   position: relative; flex: 0 0 5.5rem; aspect-ratio: 1/1; border-radius: var(--radius-sm); overflow: hidden;
-  padding: 0; border: 1px solid var(--line); background: none; cursor: pointer;
-  transition: transform var(--dur) ease, border-color var(--dur) ease, box-shadow var(--dur) ease;
+  padding: 0; border: 1px solid var(--line-strong); background: none; cursor: pointer;
+  transition: transform var(--dur) ease, border-color var(--dur) ease;
 }
 .stage-visual .visual-strip .visual-cell:hover,
 .stage-visual .visual-strip .visual-cell:focus-visible { transform: translateY(-3px); border-color: var(--accent); }
-.stage-visual .visual-strip .visual-cell.is-active {
-  border-color: var(--accent-deep);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-deep) 55%, transparent);
-}
 .stage-visual .visual-strip .visual-cell img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur) ease; }
 .stage-visual .visual-strip .visual-cell:hover img { transform: scale(1.08); }
 .stage-visual .visual-strip .visual-cell.is-cutout {
@@ -361,6 +404,7 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.45));
 }
 .stage-visual .visual-strip .visual-cell.is-cutout:hover img { transform: scale(1.12); }
+.visual-hint { font-size: var(--fs-small); color: var(--ink-3); }
 .stage-visual .visual-main::before {
   content: ""; position: absolute; left: 10%; right: 10%; bottom: 4%; height: 40%;
   background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 16%, transparent), transparent 72%);
@@ -374,35 +418,11 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
 }
 .stage-visual .stage-img.is-context { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); filter: none; }
 .stage-text { position: relative; }
-.stage-text h3 { font-size: var(--fs-h1); font-weight: 600; letter-spacing: -0.02em; margin-top: var(--space-2); }
-.stage-text .subtitle { display: block; font-size: var(--fs-small); color: var(--ink-3); font-weight: 400; margin-top: 2px; }
-.stage-text .stage-body { margin-top: var(--space-4); color: var(--ink-2); max-width: 42rem; }
+.stage-text .stage-body { color: var(--ink-2); max-width: 42rem; }
 .stage-text .stage-body p + ul { margin-top: var(--space-4); }
 .stage-text .stage-body ul { display: flex; flex-direction: column; gap: var(--space-2); }
 .stage-text .stage-body li { position: relative; padding-left: var(--space-4); }
 .stage-text .stage-body li::before { content: ""; position: absolute; left: 0; top: 0.65em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
-.stage-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
-.stage-tags .tag { font-size: var(--fs-small); color: var(--ink-2); background: var(--bg-deep); border-radius: 999px; padding: 0.2em 0.85em; }
-
-/* Always visible, never hidden behind a click — revisions are a fact about
-   the project, not a footnote you have to know to look for. */
-.version-history { margin-top: var(--space-5); padding-top: var(--space-5); border-top: 1px solid var(--line); }
-.vh-head { display: flex; align-items: center; gap: var(--space-3); }
-.vh-head-label { font-size: var(--fs-small); color: var(--ink-3); }
-.vh-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 2.5em; padding: 0.3em 0.7em; border-radius: 999px;
-  font-size: var(--fs-small); font-weight: 600; color: var(--ink-2);
-  border: 1px solid var(--line); flex: none;
-}
-.vh-badge.is-current { color: var(--bg); background: var(--accent-deep); border-color: transparent; }
-.version-history .vh-list {
-  margin-top: var(--space-4); padding-left: var(--space-4); border-left: 2px solid var(--line);
-  display: flex; flex-direction: column; gap: var(--space-4);
-}
-.version-history .vh-item { display: flex; gap: var(--space-3); align-items: flex-start; }
-.version-history .vh-item .vh-label { font-size: var(--fs-small); color: var(--ink); font-weight: 600; }
-.version-history .vh-item p { margin-top: var(--space-1); color: var(--ink-2); font-size: var(--fs-small); }
 
 /* ============================================================
    Photo utility (context photos with real backgrounds)
