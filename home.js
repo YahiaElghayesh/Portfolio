@@ -126,7 +126,7 @@ renderToolbox();
 renderWorkshop();
 renderPartners();
 renderWorkCta();
-renderContact("contact-section");
+renderContact("contact");
 renderFooter("site-footer");
 
 window.addEventListener("load", function () {

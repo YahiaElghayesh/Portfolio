@@ -122,7 +122,7 @@ document.getElementById("work-intro").innerHTML = `
 
 document.getElementById("field-stages-root").innerHTML = FIELDS.map(renderFieldStage).join("");
 
-renderContact("contact-section");
+renderContact("contact");
 renderFooter("site-footer");
 
 // Arriving via a work.html#unit-id link opens that project's detail directly.
