@@ -17,6 +17,23 @@ function initSmoothScroll() {
     gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
   }
+
+  // Lenis owns scroll position via its own RAF loop, so a plain native
+  // "#hash" jump (back to top, field nav, #contact) gets silently fought
+  // and undone the next frame. Anchor clicks need to go through Lenis.
+  document.addEventListener("click", function (e) {
+    var link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    var id = link.getAttribute("href").slice(1);
+    // "#top" points at the fixed header, which has no meaningful document
+    // position to scroll to — treat it as "scroll to the very top" instead.
+    var target = id === "top" || !id ? 0 : document.getElementById(id);
+    if (target === undefined || target === null) return;
+    e.preventDefault();
+    lenis.scrollTo(target, { offset: 0 });
+    history.pushState(null, "", id ? "#" + id : location.pathname);
+  });
+
   return lenis;
 }
 
