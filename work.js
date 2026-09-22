@@ -14,7 +14,7 @@ function renderTileVersions(unit) {
 
 function renderProjectTile(unit) {
   const hero = getHeroImage(unit, 0);
-  return `<button type="button" class="project-tile" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog" data-reveal>
+  return `<button type="button" class="project-tile sheen" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog" data-reveal data-tilt="7" data-tilt-lift="34">
     ${renderTileVisual(hero, unit.title)}
     <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
     ${renderTileVersions(unit)}
@@ -93,6 +93,17 @@ function openProject(unitId, focusOrigin) {
   document.body.classList.add("modal-open");
   modal.querySelector(".project-modal-close").focus();
   if (location.hash !== "#" + unitId) history.replaceState(null, "", "#" + unitId);
+
+  // The panel comes forward out of the page rather than just fading in, so
+  // opening a project reads as the same depth move as the rest of the site.
+  const panel = modal.querySelector(".project-modal-panel");
+  if (typeof gsap !== "undefined" && !prefersReduced) {
+    gsap.fromTo(
+      panel,
+      { z: -320, rotationX: 7, opacity: 0, transformPerspective: 1400, transformOrigin: "50% 40%" },
+      { z: 0, rotationX: 0, opacity: 1, duration: 0.55, ease: "power3.out", clearProps: "transform" }
+    );
+  }
 }
 
 function closeProject() {
@@ -135,6 +146,9 @@ window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);
   initHeadingReveals();
   initFadeUps();
+  initDepthBackdrop();
+  initSectionDepth();
   initTilt();
+  initMagnetic();
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });

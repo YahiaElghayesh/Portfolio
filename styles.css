@@ -99,6 +99,54 @@ svg { display: block; }
 .split .line { display: inline-block; transform: translateY(110%); }
 
 /* ============================================================
+   Depth / 3D
+
+   The page is staged as a shallow 3D space: content blocks arrive
+   toward the camera on scroll, cards tilt to the pointer, and a fixed
+   pool of warm light sits behind everything so that Z-movement reads
+   as travel through a lit room rather than elements arbitrarily
+   scaling. Motion is GSAP-driven (see motion.js); this file only
+   supplies the stage, the sheen, and the reduced-motion floor.
+   ============================================================ */
+.depth-bg {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
+}
+.depth-bg span {
+  position: absolute; display: block; border-radius: 50%;
+  will-change: transform;
+}
+.depth-bg .d1 {
+  width: 78vmax; height: 78vmax; top: -22vmax; left: -14vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 10%, transparent), transparent 62%);
+}
+.depth-bg .d2 {
+  width: 62vmax; height: 62vmax; bottom: -20vmax; right: -12vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent-deep) 7%, transparent), transparent 62%);
+}
+/* Everything real sits in front of the light pools. */
+#main, .site-footer { position: relative; z-index: 1; }
+
+/* A pointer-tracked gloss, so a tilting card reads as a surface
+   catching light rather than a rectangle being rotated. */
+.sheen { position: relative; }
+.sheen::after {
+  content: ""; position: absolute; inset: 0; z-index: 3;
+  pointer-events: none; border-radius: inherit; opacity: 0;
+  background: radial-gradient(
+    18rem circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.10), transparent 60%
+  );
+  transition: opacity var(--dur) ease;
+}
+.sheen:hover::after, .sheen:focus-visible::after { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-bg { display: none; }
+  .sheen::after { display: none; }
+}
+
+/* ============================================================
    Top bar
    ============================================================ */
 .topbar {
@@ -330,13 +378,16 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
    highlights, gallery, versions — in a modal. */
 .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: var(--space-5); }
 .project-tile {
-  display: block; text-align: left; width: 100%;
+  position: relative; display: block; text-align: left; width: 100%;
   background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; cursor: pointer;
-  transition: transform var(--dur) ease, border-color var(--dur) ease, box-shadow var(--dur) ease;
+  /* No transform here: the pointer tilt writes an inline transform from
+     GSAP, and a CSS hover transform on the same element would be
+     silently overridden by it. The lift lives in the tilt's Z instead. */
+  transition: border-color var(--dur) ease, box-shadow var(--dur) ease;
 }
 .project-tile:hover, .project-tile:focus-visible {
-  transform: translateY(-4px); border-color: var(--line-strong);
+  border-color: var(--line-strong);
   box-shadow: 0 24px 44px -22px rgba(0,0,0,0.55);
 }
 .tile-visual { position: relative; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; overflow: hidden; }

@@ -101,7 +101,7 @@ function renderPartners() {
       </div>
       <div class="partners-grid" data-reveal>
         ${PARTNERS.map(
-          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener" title="${p.name}">
+          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener" title="${p.name}" data-tilt="6" data-tilt-lift="24">
             <span class="partner-logo">
               <img src="${p.logo}" alt="${p.name}">
               <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
@@ -133,6 +133,10 @@ window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);
   initHeadingReveals();
   initFadeUps();
-  initHeroParallax();
+  initDepthBackdrop();
+  initSectionDepth();
+  initHeroDepth();
+  initTilt();
   initMagnetic();
+  if (window.ScrollTrigger) ScrollTrigger.refresh();
 });
