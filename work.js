@@ -14,10 +14,15 @@ function renderTileVersions(unit) {
 
 function renderProjectTile(unit) {
   const hero = getHeroImage(unit, 0);
-  return `<button type="button" class="project-tile sheen" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog" data-reveal data-tilt="7" data-tilt-lift="34">
-    ${renderTileVisual(hero, unit.title)}
-    <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
-    ${renderTileVersions(unit)}
+  // Two transform layers, deliberately on two different elements: the outer
+  // button is carried through depth by the scroll, the inner surface tilts to
+  // the pointer. On one element the two would overwrite each other.
+  return `<button type="button" class="project-tile" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog">
+    <span class="tile-inner sheen" data-tilt="8" data-tilt-lift="40">
+      ${renderTileVisual(hero, unit.title)}
+      <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
+      ${renderTileVersions(unit)}
+    </span>
   </button>`;
 }
 
@@ -147,7 +152,7 @@ window.addEventListener("load", function () {
   initHeadingReveals();
   initFadeUps();
   initDepthBackdrop();
-  initSectionDepth();
+  initDepthFlow();
   initTilt();
   initMagnetic();
   if (window.ScrollTrigger) ScrollTrigger.refresh();

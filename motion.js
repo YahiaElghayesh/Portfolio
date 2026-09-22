@@ -144,40 +144,66 @@ function initTilt(root) {
   });
 }
 
-// Content blocks arrive from depth as they enter the viewport, so each one
-// reads as stepping forward to be read rather than sliding past.
-function initSectionDepth(root) {
+// Objects travel through the viewport in 3D: they arrive tilted back from
+// below, sit flat and full while they are the thing you are looking at, then
+// tilt away again as they leave the top.
+//
+// Tied to the element's whole passage across the viewport rather than to a
+// narrow "has arrived" band, for two reasons. It runs every time the element
+// crosses, in either direction, instead of firing once and never again. And
+// because the element is somewhere on its arc the entire time it is on
+// screen, the depth is continuously visible instead of being a flicker you
+// miss if you scroll past quickly.
+function initDepthFlow(root) {
   if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
-  var narrow = window.matchMedia("(max-width: 780px)").matches;
-  var depth = narrow ? 120 : 220;
-  var sel = "#main .section > .container, .work-intro > .container, .field-stage > .container";
+  var scope = root || document;
+  var narrow = window.matchMedia("(max-width: 820px)").matches;
 
-  (root || document).querySelectorAll(sel).forEach(function (el) {
-    if (el.dataset.depthBound) return;
-    el.dataset.depthBound = "1";
+  // The objects, where depth is the whole point, and the reading surfaces,
+  // which have to come to rest flat and legible for much longer.
+  var OBJECTS = ".project-tile, .partner-card, .photo-frame, .toolbox-panel, .workshop-lead .photo-frame";
+  var SURFACES = "#main .section > .container, .work-intro > .container, .field-stage > .container";
 
-    // A block taller than the viewport would visibly skew at its far edge,
-    // because the perspective origin sits at its own centre. Those get the
-    // Z move only.
-    var tall = el.getBoundingClientRect().height > window.innerHeight * 0.9;
-    gsap.set(el, { transformOrigin: "50% 50%" });
-    gsap.fromTo(
-      el,
-      { z: -depth, rotationX: tall ? 0 : 2.5, opacity: 0.4, transformPerspective: 1600 },
-      {
-        z: 0, rotationX: 0, opacity: 1, transformPerspective: 1600, ease: "power1.out",
-        scrollTrigger: {
-          trigger: el, start: "top 90%", end: "top 55%", scrub: 0.5,
-          // Once a block has fully arrived there is nothing left to animate,
-          // and leaving a 3D matrix on it would keep a text block on its own
-          // compositing layer for the rest of the session, which softens
-          // glyph rendering. Drop the transform; the tween re-applies it
-          // (perspective included) if the reader scrolls back up.
-          onLeave: function () { gsap.set(el, { clearProps: "transform" }); },
-        },
-      }
-    );
+  var objects = Array.prototype.slice.call(scope.querySelectorAll(OBJECTS));
+  // Never drive one depth target from inside another. Objects win; the text
+  // block wrapped around them stays put so it is not fighting its children.
+  var surfaces = Array.prototype.slice.call(scope.querySelectorAll(SURFACES)).filter(function (c) {
+    return !objects.some(function (o) { return c.contains(o); });
   });
+
+  apply(objects, narrow ? 14 : 18, narrow ? 300 : 420, 0.25);
+  apply(surfaces, narrow ? 5 : 7, narrow ? 140 : 200, 0.45);
+
+  function apply(els, rot, dist, dim) {
+    els.forEach(function (el, i) {
+      if (el.dataset.depthBound) return;
+      el.dataset.depthBound = "1";
+      gsap.set(el, { transformOrigin: "50% 50%", transformPerspective: 1100 });
+
+      // Staggering the start by position in the row makes a grid ripple
+      // through depth instead of moving as one flat slab.
+      var lead = (i % 3) * 45;
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          start: "top bottom-=" + lead,
+          end: "bottom top+=" + lead,
+          scrub: 0.7,
+          invalidateOnRefresh: true,
+        },
+      });
+      tl.fromTo(
+          el,
+          { rotationX: rot, z: -dist, opacity: dim },
+          { rotationX: 0, z: 0, opacity: 1, ease: "power2.out", duration: 1 }
+        )
+        .to(el, { duration: 0.85 }) // flat through the reading zone
+        .to(el, {
+          rotationX: -rot * 0.8, z: -dist * 0.55, opacity: dim + 0.25,
+          ease: "power2.in", duration: 1,
+        });
+    });
+  }
 }
 
 // The two pools of light behind the page drift against the scroll, which
@@ -274,43 +300,50 @@ function initHeroDepth() {
   if (!hero || prefersReduced || typeof gsap === "undefined") return;
   var portrait = hero.querySelector(".hero-portrait");
   var content = hero.querySelector(".hero-content");
-  var grid = hero.querySelector(".hero-grid");
   if (!portrait || !content) return;
 
-  if (!isCoarsePointer) {
-    gsap.set(portrait, { transformPerspective: 1200, transformOrigin: "50% 50%" });
-    var pRx = gsap.quickTo(portrait, "rotationX", { duration: 0.9, ease: "power3" });
-    var pRy = gsap.quickTo(portrait, "rotationY", { duration: 0.9, ease: "power3" });
-    var pX = gsap.quickTo(portrait, "x", { duration: 0.9, ease: "power3" });
-    var pY = gsap.quickTo(portrait, "y", { duration: 0.9, ease: "power3" });
-    var cX = gsap.quickTo(content, "x", { duration: 1.1, ease: "power3" });
-    var cY = gsap.quickTo(content, "y", { duration: 1.1, ease: "power3" });
+  // Scroll-driven, so it is just as present on a phone as on a desktop:
+  // the portrait swings away into depth as you scroll through the hero,
+  // and the text sinks back behind it. Both start neutral at the top of
+  // the page, so the first paint is never a tilted or faded hero.
+  if (typeof ScrollTrigger !== "undefined") {
+    var pass = { trigger: hero, start: "top top", end: "bottom top", scrub: 0.6 };
+    gsap.set(portrait, { transformOrigin: "50% 50%", transformPerspective: 1100 });
+    gsap.fromTo(
+      portrait,
+      { rotationY: 0, rotationX: 0, z: 0 },
+      { rotationY: -18, rotationX: 11, z: -300, ease: "none", scrollTrigger: pass }
+    );
+    gsap.set(content, { transformOrigin: "0% 50%", transformPerspective: 1100 });
+    gsap.fromTo(
+      content,
+      { z: 0, opacity: 1 },
+      { z: -200, opacity: 0.25, ease: "none", scrollTrigger: pass }
+    );
+  }
+
+  // The pointer layer rides on the photo itself, one level inside the frame
+  // the scroll is already moving. Two systems must never write the same
+  // element's transform, or the last one to run silently wins.
+  var photo = portrait.querySelector("img");
+  if (!isCoarsePointer && photo) {
+    gsap.set(photo, { transformPerspective: 900, transformOrigin: "50% 50%", scale: 1.06 });
+    var pRx = gsap.quickTo(photo, "rotationX", { duration: 0.9, ease: "power3" });
+    var pRy = gsap.quickTo(photo, "rotationY", { duration: 0.9, ease: "power3" });
+    var pX = gsap.quickTo(photo, "x", { duration: 0.9, ease: "power3" });
+    var pY = gsap.quickTo(photo, "y", { duration: 0.9, ease: "power3" });
 
     hero.addEventListener("pointermove", function (e) {
       var px = e.clientX / window.innerWidth - 0.5;
       var py = e.clientY / window.innerHeight - 0.5;
-      pRy(px * 9);
-      pRx(-py * 7);
-      pX(px * 16);
-      pY(py * 12);
-      // The text plane drifts the other way and less far: the nearer an
-      // object, the more it should shift.
-      cX(px * -9);
-      cY(py * -7);
+      pRy(px * 10);
+      pRx(-py * 8);
+      pX(px * 20);
+      pY(py * 15);
     }, { passive: true });
 
     hero.addEventListener("pointerleave", function () {
-      pRx(0); pRy(0); pX(0); pY(0); cX(0); cY(0);
-    });
-  }
-
-  // Leaving the hero pushes it back into the scene, so whatever follows
-  // reads as arriving in front of it instead of merely scrolling over it.
-  if (grid && typeof ScrollTrigger !== "undefined") {
-    gsap.set(grid, { transformPerspective: 1600, transformOrigin: "50% 100%" });
-    gsap.to(grid, {
-      z: -260, opacity: 0.35, ease: "none",
-      scrollTrigger: { trigger: hero, start: "bottom bottom", end: "bottom top", scrub: 0.6 },
+      pRx(0); pRy(0); pX(0); pY(0);
     });
   }
 }

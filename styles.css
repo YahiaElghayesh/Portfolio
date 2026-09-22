@@ -271,7 +271,7 @@ svg { display: block; }
 }
 .tool-item .t-logo.is-empty { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-deep); flex: none; }
 .tool-item.has-certs { flex-wrap: wrap; }
-.cert-badges { display: flex; gap: var(--space-2); margin-left: calc(32px + var(--space-4)); margin-top: var(--space-2); flex-basis: 100%; }
+.cert-badges { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: calc(32px + var(--space-4)); margin-top: var(--space-2); flex-basis: 100%; }
 .cert-badge {
   display: inline-flex; align-items: center; gap: var(--space-2);
   border: 1px solid var(--line); border-radius: 999px; padding: 0.2em 0.7em 0.2em 0.2em;
@@ -280,6 +280,13 @@ svg { display: block; }
 .cert-badge:hover { border-color: var(--accent); }
 .cert-badge img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; }
 .cert-badge span { font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; }
+/* On a phone the panel padding plus the indent under the SOLIDWORKS row
+   left the three credential pills about 100px short of the space they
+   need, so they ran off the card. Drop the indent, tighten the panel. */
+@media (max-width: 780px) {
+  .toolbox-panel { padding: var(--space-5); }
+  .cert-badges { margin-left: 0; }
+}
 
 /* ============================================================
    Workshop
@@ -341,7 +348,9 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
   background: var(--ink); border-radius: var(--radius); padding: var(--space-4);
   transition: transform var(--dur) ease, box-shadow var(--dur) ease;
 }
-.partner-card:hover .partner-logo { transform: translateY(-4px); box-shadow: 0 20px 36px -18px rgba(0,0,0,0.5); }
+/* No transform on hover: the pointer tilt owns this element's transform,
+   and a CSS one here would be silently overridden by the inline value. */
+.partner-card:hover .partner-logo { box-shadow: 0 20px 36px -18px rgba(0,0,0,0.5); }
 .partner-logo img { max-width: 85%; max-height: 78%; width: auto; height: auto; object-fit: contain; }
 /* Nested inside .partner-logo (not a sibling) so it rides along with the
    same hover lift instead of staying pinned in place. */
@@ -377,16 +386,17 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
    grid of tiles (photo + title). Clicking one opens the full detail — desc,
    highlights, gallery, versions — in a modal. */
 .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: var(--space-5); }
-.project-tile {
-  position: relative; display: block; text-align: left; width: 100%;
+/* The button is only a transform carrier for the scroll depth; all the
+   surface (fill, border, clipping) lives on .tile-inner, which is what the
+   pointer tilts. Keeping them separate lets both run at once. */
+.project-tile { display: block; text-align: left; width: 100%; cursor: pointer; }
+.tile-inner {
+  position: relative; display: block;
   background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
-  overflow: hidden; cursor: pointer;
-  /* No transform here: the pointer tilt writes an inline transform from
-     GSAP, and a CSS hover transform on the same element would be
-     silently overridden by it. The lift lives in the tilt's Z instead. */
+  overflow: hidden;
   transition: border-color var(--dur) ease, box-shadow var(--dur) ease;
 }
-.project-tile:hover, .project-tile:focus-visible {
+.project-tile:hover .tile-inner, .project-tile:focus-visible .tile-inner {
   border-color: var(--line-strong);
   box-shadow: 0 24px 44px -22px rgba(0,0,0,0.55);
 }

@@ -88,7 +88,7 @@ function renderWorkshop() {
         </div>
       </div>
       <div class="workshop-strip">
-        ${WORKSHOP_STRIP.map((w) => `<div class="photo-frame" data-reveal><img src="${w.file}" alt="${w.alt}"></div>`).join("")}
+        ${WORKSHOP_STRIP.map((w) => `<div class="photo-frame"><img src="${w.file}" alt="${w.alt}"></div>`).join("")}
       </div>
     </div>`;
 }
@@ -101,8 +101,8 @@ function renderPartners() {
       </div>
       <div class="partners-grid" data-reveal>
         ${PARTNERS.map(
-          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener" title="${p.name}" data-tilt="6" data-tilt-lift="24">
-            <span class="partner-logo">
+          (p) => `<a class="partner-card" href="${p.url}" target="_blank" rel="noopener" title="${p.name}">
+            <span class="partner-logo" data-tilt="8" data-tilt-lift="26">
               <img src="${p.logo}" alt="${p.name}">
               <span class="flag">${FLAG_ICONS[p.flag] || ""}</span>
             </span>
@@ -134,7 +134,7 @@ window.addEventListener("load", function () {
   initHeadingReveals();
   initFadeUps();
   initDepthBackdrop();
-  initSectionDepth();
+  initDepthFlow();
   initHeroDepth();
   initTilt();
   initMagnetic();
