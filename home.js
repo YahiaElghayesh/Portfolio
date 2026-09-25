@@ -134,7 +134,10 @@ window.addEventListener("load", function () {
   initHeadingReveals();
   initFadeUps();
   initDepthBackdrop();
+  initDepthFloor();
+  initScrollVelocity();
   initDepthFlow();
+  initPhotoParallax();
   initHeroDepth();
   initTilt();
   initMagnetic();

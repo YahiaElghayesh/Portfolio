@@ -152,7 +152,10 @@ window.addEventListener("load", function () {
   initHeadingReveals();
   initFadeUps();
   initDepthBackdrop();
+  initDepthFloor();
+  initScrollVelocity();
   initDepthFlow();
+  initPhotoParallax();
   initTilt();
   initMagnetic();
   if (window.ScrollTrigger) ScrollTrigger.refresh();

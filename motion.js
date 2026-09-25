@@ -72,13 +72,23 @@ function initHeadingReveals(root) {
   headings.forEach(function (h) {
     var lines = h.querySelectorAll(".line");
     if (!lines.length) return;
-    gsap.to(lines, {
-      y: 0,
-      duration: 0.9,
-      ease: "power3.out",
-      stagger: 0.04,
-      scrollTrigger: { trigger: h, start: "top 90%" },
-    });
+    // Each word hinges up from its own bottom edge and comes forward out of
+    // depth, instead of sliding up flat. The origin is the bottom of the
+    // word and the perspective is per-word, so every word gets its own
+    // vanishing point rather than sharing one for the whole page — that is
+    // what stops a long heading from looking sheared off to one side.
+    gsap.set(lines, { transformOrigin: "50% 100%", transformPerspective: 520 });
+    gsap.fromTo(
+      lines,
+      { yPercent: 110, y: 0, rotationX: -58, z: -90, opacity: 0 },
+      {
+        yPercent: 0, y: 0, rotationX: 0, z: 0, opacity: 1,
+        duration: 1.05,
+        ease: "power3.out",
+        stagger: 0.055,
+        scrollTrigger: { trigger: h, start: "top 90%" },
+      }
+    );
   });
 }
 
@@ -154,6 +164,38 @@ function initTilt(root) {
 // because the element is somewhere on its arc the entire time it is on
 // screen, the depth is continuously visible instead of being a flicker you
 // miss if you scroll past quickly.
+// Where an element sits across its own row: -1 at the left-hand end, +1 at
+// the right-hand end, 0 dead centre — and 0 for anything that is alone on
+// its line, which has no row to be positioned along.
+//
+// Measured from laid-out geometry, not from an index, and against the row's
+// real extent rather than the container's. Both matter here. The grids are
+// auto-fill, so an index only maps to a column if you already know the
+// column count, and it changes with the viewport. And the rows are ragged —
+// Automation has two projects in a four-wide grid — so measuring against the
+// container would put a short row entirely in the left half and fan every
+// card in it the same way, instead of opening it around its own middle.
+function rowPosition(el) {
+  var parent = el.parentNode;
+  if (!parent || !parent.children) return 0;
+  var er = el.getBoundingClientRect();
+  var left = er.left;
+  var right = er.right;
+
+  Array.prototype.forEach.call(parent.children, function (sib) {
+    var sr = sib.getBoundingClientRect();
+    // Same row = vertical spans overlap. The 4px slack absorbs cards of
+    // slightly different heights sitting on one line.
+    if (sr.bottom <= er.top + 4 || sr.top >= er.bottom - 4) return;
+    if (sr.left < left) left = sr.left;
+    if (sr.right > right) right = sr.right;
+  });
+
+  var span = right - left;
+  if (span <= er.width + 1) return 0;
+  return ((er.left + er.width / 2 - left) / span - 0.5) * 2;
+}
+
 function initDepthFlow(root) {
   if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
   var scope = root || document;
@@ -171,18 +213,34 @@ function initDepthFlow(root) {
     return !objects.some(function (o) { return c.contains(o); });
   });
 
-  apply(objects, narrow ? 14 : 18, narrow ? 300 : 420, 0.25);
-  apply(surfaces, narrow ? 5 : 7, narrow ? 140 : 200, 0.45);
+  apply(objects, narrow ? 14 : 18, narrow ? 300 : 420, 0.25, narrow ? 11 : 17);
+  apply(surfaces, narrow ? 5 : 7, narrow ? 140 : 200, 0.45, 0);
 
-  function apply(els, rot, dist, dim) {
+  function apply(els, rot, dist, dim, fan) {
     els.forEach(function (el, i) {
       if (el.dataset.depthBound) return;
       el.dataset.depthBound = "1";
       gsap.set(el, { transformOrigin: "50% 50%", transformPerspective: 1100 });
 
-      // Staggering the start by position in the row makes a grid ripple
-      // through depth instead of moving as one flat slab.
-      var lead = (i % 3) * 45;
+      var side = rowPosition(el);
+      // A phone stacks every one of these into a single column, so there is
+      // no row left to fan along and rowPosition correctly returns 0 for all
+      // of them — which would leave the narrow layout, the one the site is
+      // mostly read on, with no Y-rotation at all. Down there the cards are
+      // dealt instead: consecutive cards arrive turned opposite ways, which
+      // is the same idea (a row opening) expressed over time rather than
+      // across the screen.
+      if (fan && narrow && side === 0) side = i % 2 ? 0.75 : -0.75;
+
+      // Staggering the start by distance from the centre makes a row ripple
+      // outward through depth instead of moving as one flat slab...
+      var lead = Math.abs(side) * 70;
+      // ...and turning the two halves of the row in opposite directions
+      // makes it open like a hand of cards being laid down. A full-width
+      // block sits at side ~0 and so never fans, which is what we want:
+      // only things arranged in a row have a row to fan along. Always 0 at
+      // rest, so nothing is ever read at an angle.
+      var turn = fan ? side * fan : 0;
       var tl = gsap.timeline({
         scrollTrigger: {
           trigger: el,
@@ -194,12 +252,13 @@ function initDepthFlow(root) {
       });
       tl.fromTo(
           el,
-          { rotationX: rot, z: -dist, opacity: dim },
-          { rotationX: 0, z: 0, opacity: 1, ease: "power2.out", duration: 1 }
+          { rotationX: rot, rotationY: turn, z: -dist, opacity: dim },
+          { rotationX: 0, rotationY: 0, z: 0, opacity: 1, ease: "power2.out", duration: 1 }
         )
         .to(el, { duration: 0.85 }) // flat through the reading zone
         .to(el, {
-          rotationX: -rot * 0.8, z: -dist * 0.55, opacity: dim + 0.25,
+          rotationX: -rot * 0.8, rotationY: -turn * 0.6,
+          z: -dist * 0.55, opacity: dim + 0.25,
           ease: "power2.in", duration: 1,
         });
     });
@@ -232,6 +291,91 @@ function initDepthBackdrop() {
       x2(px * -45); y2(py * -30);
     }, { passive: true });
   }
+}
+
+// Scroll speed, published as a CSS variable rather than spent on a
+// transform. Nothing here competes with the tweens above for an element's
+// matrix: --vel only drives paint properties (the floor's line brightness),
+// so "how fast am I moving" becomes visible without a second animation
+// system touching a single transform.
+function initScrollVelocity() {
+  if (prefersReduced || typeof gsap === "undefined") return;
+  var last = window.scrollY;
+  var impulse = 0;
+  var vel = 0;
+
+  window.addEventListener("scroll", function () {
+    var y = window.scrollY;
+    // 70px in one frame is treated as "flat out"; anything more clamps.
+    impulse = Math.min(1, Math.abs(y - last) / 70);
+    last = y;
+  }, { passive: true });
+
+  gsap.ticker.add(function () {
+    impulse *= 0.9;            // no scrolling => impulse decays to nothing
+    vel += (impulse - vel) * 0.12; // and the published value eases after it
+    if (vel < 0.001) vel = 0;
+    document.documentElement.style.setProperty("--vel", vel.toFixed(3));
+  });
+}
+
+// The receding floor. A Z-translation on its own is indistinguishable from a
+// scale — it only becomes travel once there is a ground plane staying still
+// behind it. The plane itself is laid down in CSS (one rotateX); all this
+// does is scroll the grid under the page, which is why it animates a custom
+// property instead of a transform: the rotation has to stay untouched.
+function initDepthFloor() {
+  var floor = document.querySelector(".depth-bg .floor");
+  if (!floor || prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+  gsap.to(floor, {
+    "--gy": "1400px",
+    ease: "none",
+    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 1 },
+  });
+}
+
+// Depth inside a photograph, not just around it. The image is overscaled and
+// then panned vertically inside its own frame across the frame's passage
+// through the viewport, so photo and frame move at different rates. That
+// difference in rate is the whole effect — it is the one depth cue that
+// survives on a phone, where there is no cursor to tilt anything.
+//
+// The overscale is set here and not in the stylesheet on purpose: if GSAP
+// never runs, or the reader asked for reduced motion, a CSS scale would just
+// leave every photo permanently cropped with nothing ever moving it.
+//
+// Only frames whose image already fills them are eligible. A cutout sits on
+// its background with visible air around it, so panning it would slide the
+// object itself rather than reveal more photograph, and the detail modal's
+// photos scroll inside the modal rather than with the page.
+function initPhotoParallax(root) {
+  if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+  var scope = root || document;
+  var imgs = scope.querySelectorAll(".photo-frame img, .tile-visual.is-context img");
+
+  imgs.forEach(function (img) {
+    if (img.dataset.parallaxBound) return;
+    img.dataset.parallaxBound = "1";
+    var frame = img.closest(".photo-frame, .tile-visual");
+    if (!frame) return;
+
+    gsap.set(img, { scale: 1.16, transformOrigin: "50% 50%" });
+    gsap.fromTo(
+      img,
+      { yPercent: -6 },
+      {
+        yPercent: 6,
+        ease: "none",
+        scrollTrigger: {
+          trigger: frame,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.5,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
+  });
 }
 
 // Project photo galleries: clicking a thumbnail trades places with the main

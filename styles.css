@@ -96,7 +96,12 @@ svg { display: block; }
 .section-head p { margin-top: var(--space-3); color: var(--ink-2); }
 
 .split { overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
-.split .line { display: inline-block; transform: translateY(110%); }
+/* Each word is its own hinge: it swings up out of the slot from its bottom
+   edge, so a heading builds itself out of depth instead of sliding in flat.
+   The hidden start state stays a plain translate so that a browser with no
+   JS (or a reader with reduced motion, where motion.js never adds .split)
+   is never left with an invisible heading. */
+.split .line { display: inline-block; transform: translateY(110%); will-change: transform; }
 
 /* ============================================================
    Depth / 3D
@@ -111,6 +116,8 @@ svg { display: block; }
 .depth-bg {
   position: fixed; inset: 0; z-index: 0;
   pointer-events: none; overflow: hidden;
+  /* The floor below is the only child that needs a camera. */
+  perspective: 55rem; perspective-origin: 50% 0%;
 }
 .depth-bg span {
   position: absolute; display: block; border-radius: 50%;
@@ -124,6 +131,29 @@ svg { display: block; }
   width: 62vmax; height: 62vmax; bottom: -20vmax; right: -12vmax;
   background: radial-gradient(circle, color-mix(in srgb, var(--accent-deep) 7%, transparent), transparent 62%);
 }
+/* A receding floor. Without a ground plane, moving something along Z only
+   reads as scaling; with one, the same move reads as travel. Held at
+   engineering-drawing strength — a faint CAD grid, not a neon highway —
+   and masked away well before the horizon so it never becomes scenery.
+   --gy is scrolled by motion.js so the floor travels under the page;
+   --vel is scroll speed, which brightens the lines when you move fast. */
+.depth-bg .floor {
+  border-radius: 0;
+  left: -60%; right: -60%; width: auto;
+  bottom: -12vh; height: 80vh;
+  transform: rotateX(77deg);
+  transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--accent) 34%, transparent) 0 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--accent) 34%, transparent) 0 1px, transparent 1px);
+  background-size: 7rem 7rem, 7rem 7rem;
+  background-position: 0 var(--gy, 0px), 0 var(--gy, 0px);
+  opacity: calc(0.13 + var(--vel, 0) * 0.17);
+  -webkit-mask-image: linear-gradient(to top, #000, transparent 70%);
+  mask-image: linear-gradient(to top, #000, transparent 70%);
+  will-change: background-position, opacity;
+}
+
 /* Everything real sits in front of the light pools. */
 #main, .site-footer { position: relative; z-index: 1; }
 
@@ -229,7 +259,7 @@ svg { display: block; }
   overflow: hidden; border: 1px solid var(--line);
   box-shadow: 0 40px 70px -30px rgba(0,0,0,0.55);
 }
-.hero-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); transition: transform 0.4s ease-out; will-change: transform; }
+.hero-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); will-change: transform; }
 @media (max-width: 780px) {
   .hero { padding-top: 5.5rem; padding-bottom: var(--space-6); }
   .hero-grid { grid-template-columns: 1fr; gap: var(--space-6); }
@@ -401,9 +431,17 @@ footer.site-footer { padding-block: var(--space-5); border-top: 1px solid var(--
   box-shadow: 0 24px 44px -22px rgba(0,0,0,0.55);
 }
 .tile-visual { position: relative; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.tile-visual img { transition: transform var(--dur) ease; }
-.project-tile:hover .tile-visual img { transform: scale(1.05); }
+.tile-visual.is-context img { transition: filter var(--dur) ease; }
+.tile-visual.is-cutout img { transition: transform var(--dur) ease; }
+/* Context photos are overscaled BY motion.js (not here — see
+   initPhotoParallax) so it can slide them vertically
+   inside the frame as the tile crosses the viewport — the photo and its
+   frame move at different rates, which is what gives a flat image depth.
+   Their hover affordance is brightness rather than a transform, because
+   the transform on that img now belongs to the parallax. */
 .tile-visual.is-context img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.project-tile:hover .tile-visual.is-context img { filter: brightness(1.08); }
+.project-tile:hover .tile-visual.is-cutout img { transform: scale(1.05); }
 .tile-visual.is-cutout img { max-width: 78%; max-height: 78%; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 14px 20px rgba(0,0,0,0.45)); }
 .tile-title { display: block; padding: var(--space-4) var(--space-5); font-weight: 600; }
 .tile-title .subtitle { display: block; margin-top: 2px; font-size: var(--fs-small); font-weight: 400; color: var(--ink-3); }
