@@ -158,5 +158,6 @@ window.addEventListener("load", function () {
   initPhotoParallax();
   initTilt();
   initMagnetic();
+  initWebGL();
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });

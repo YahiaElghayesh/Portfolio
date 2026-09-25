@@ -154,6 +154,17 @@ svg { display: block; }
   will-change: background-position, opacity;
 }
 
+/* The WebGL canvas sits in the same fixed layer as the light pools, behind
+   the page. #main is transparent, so the shaders draw *through* it: an
+   element that hands its photograph to the GPU keeps its real border,
+   radius and shadow here in the DOM and simply stops painting its own
+   pixels. See webgl.js. */
+.gl-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block; pointer-events: none;
+}
+
 /* Everything real sits in front of the light pools. */
 #main, .site-footer { position: relative; z-index: 1; }
 
@@ -260,6 +271,12 @@ svg { display: block; }
   box-shadow: 0 40px 70px -30px rgba(0,0,0,0.55);
 }
 .hero-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); will-change: transform; }
+/* Frames whose photograph WebGL has taken over. The <img> is only faded out
+   by webgl.js once its texture is actually on the GPU, so if anything in
+   that chain fails the photograph is still here. */
+[data-gl-frame] { background: transparent; }
+[data-gl-frame] img[data-gl] { transition: opacity 0.35s ease; }
+[data-gl-frame].gl-active { border-color: transparent; box-shadow: none; }
 @media (max-width: 780px) {
   .hero { padding-top: 5.5rem; padding-bottom: var(--space-6); }
   .hero-grid { grid-template-columns: 1fr; gap: var(--space-6); }

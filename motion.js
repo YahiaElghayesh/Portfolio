@@ -203,7 +203,14 @@ function initDepthFlow(root) {
 
   // The objects, where depth is the whole point, and the reading surfaces,
   // which have to come to rest flat and legible for much longer.
-  var OBJECTS = ".project-tile, .partner-card, .photo-frame, .toolbox-panel, .workshop-lead .photo-frame";
+  // Photo frames come out of this list when WebGL is going to run, because
+  // there they are only a border around a plane the GPU draws. CSS would
+  // rotate the frame while the plane, positioned from the frame's
+  // screen rectangle, stayed square to the camera, and the two would
+  // disagree on every frame. WebGL does that element's 3D instead.
+  var OBJECTS = willUseWebGL()
+    ? ".project-tile, .partner-card, .toolbox-panel"
+    : ".project-tile, .partner-card, .photo-frame, .toolbox-panel, .workshop-lead .photo-frame";
   var SURFACES = "#main .section > .container, .work-intro > .container, .field-stage > .container";
 
   var objects = Array.prototype.slice.call(scope.querySelectorAll(OBJECTS));
@@ -293,29 +300,33 @@ function initDepthBackdrop() {
   }
 }
 
-// Scroll speed, published as a CSS variable rather than spent on a
-// transform. Nothing here competes with the tweens above for an element's
-// matrix: --vel only drives paint properties (the floor's line brightness),
-// so "how fast am I moving" becomes visible without a second animation
-// system touching a single transform.
-function initScrollVelocity() {
-  if (prefersReduced || typeof gsap === "undefined") return;
-  var last = window.scrollY;
-  var impulse = 0;
-  var vel = 0;
+// Scroll speed, published two ways: as a CSS variable for paint properties,
+// and as a signed number the WebGL shaders read to bend geometry. Nothing
+// here competes with the tweens for an element's matrix.
+//
+// The reading comes from ScrollTrigger rather than a scroll listener.
+// A listener on "scroll" fires unbatched, ahead of the frame the rest of
+// this file draws in, so the value the shaders read would be from a
+// different moment than the transforms around them.
+var scrollVelocitySigned = 0;
 
-  window.addEventListener("scroll", function () {
-    var y = window.scrollY;
-    // 70px in one frame is treated as "flat out"; anything more clamps.
-    impulse = Math.min(1, Math.abs(y - last) / 70);
-    last = y;
-  }, { passive: true });
+function initScrollVelocity() {
+  if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+  var impulse = 0;
+
+  ScrollTrigger.create({
+    onUpdate: function (self) {
+      // px/sec, signed. 2600 px/sec is treated as flat out.
+      var v = self.getVelocity() / 2600;
+      impulse = Math.max(-1, Math.min(1, v));
+    },
+  });
 
   gsap.ticker.add(function () {
-    impulse *= 0.9;            // no scrolling => impulse decays to nothing
-    vel += (impulse - vel) * 0.12; // and the published value eases after it
-    if (vel < 0.001) vel = 0;
-    document.documentElement.style.setProperty("--vel", vel.toFixed(3));
+    impulse *= 0.9;                                      // decays to nothing
+    scrollVelocitySigned += (impulse - scrollVelocitySigned) * 0.12;
+    if (Math.abs(scrollVelocitySigned) < 0.001) scrollVelocitySigned = 0;
+    document.documentElement.style.setProperty("--vel", Math.abs(scrollVelocitySigned).toFixed(3));
   });
 }
 
@@ -351,7 +362,9 @@ function initDepthFloor() {
 function initPhotoParallax(root) {
   if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
   var scope = root || document;
-  var imgs = scope.querySelectorAll(".photo-frame img, .tile-visual.is-context img");
+  // [data-gl] images are handed to the GPU, which does its own framing in
+  // the shader, so panning the (now hidden) DOM image would be wasted work.
+  var imgs = scope.querySelectorAll(".photo-frame img:not([data-gl]), .tile-visual.is-context img:not([data-gl])");
 
   imgs.forEach(function (img) {
     if (img.dataset.parallaxBound) return;
@@ -450,14 +463,21 @@ function initHeroDepth() {
   // the portrait swings away into depth as you scroll through the hero,
   // and the text sinks back behind it. Both start neutral at the top of
   // the page, so the first paint is never a tilted or faded hero.
+  var glOwnsPortrait = willUseWebGL();
+
   if (typeof ScrollTrigger !== "undefined") {
     var pass = { trigger: hero, start: "top top", end: "bottom top", scrub: 0.6 };
-    gsap.set(portrait, { transformOrigin: "50% 50%", transformPerspective: 1100 });
-    gsap.fromTo(
-      portrait,
-      { rotationY: 0, rotationX: 0, z: 0 },
-      { rotationY: -18, rotationX: 11, z: -300, ease: "none", scrollTrigger: pass }
-    );
+    // The portrait's own frame stays still when WebGL has it: the shader
+    // bends the photograph itself, and moving the frame underneath would
+    // just drag the plane off the box it is meant to fill.
+    if (!glOwnsPortrait) {
+      gsap.set(portrait, { transformOrigin: "50% 50%", transformPerspective: 1100 });
+      gsap.fromTo(
+        portrait,
+        { rotationY: 0, rotationX: 0, z: 0 },
+        { rotationY: -18, rotationX: 11, z: -300, ease: "none", scrollTrigger: pass }
+      );
+    }
     gsap.set(content, { transformOrigin: "0% 50%", transformPerspective: 1100 });
     gsap.fromTo(
       content,
@@ -470,7 +490,7 @@ function initHeroDepth() {
   // the scroll is already moving. Two systems must never write the same
   // element's transform, or the last one to run silently wins.
   var photo = portrait.querySelector("img");
-  if (!isCoarsePointer && photo) {
+  if (!isCoarsePointer && photo && !glOwnsPortrait) {
     gsap.set(photo, { transformPerspective: 900, transformOrigin: "50% 50%", scale: 1.06 });
     var pRx = gsap.quickTo(photo, "rotationX", { duration: 0.9, ease: "power3" });
     var pRy = gsap.quickTo(photo, "rotationY", { duration: 0.9, ease: "power3" });

@@ -82,13 +82,13 @@ function renderWorkshop() {
         <h2 data-reveal-text>In the workshop</h2>
       </div>
       <div class="workshop-lead" data-reveal>
-        <div class="photo-frame"><img src="assets/img/workshop-overview.webp" alt="Yahia's home workshop, tool wall and workbench"></div>
+        <div class="photo-frame" data-gl-frame><img src="assets/img/workshop-overview.webp" alt="Yahia's home workshop, tool wall and workbench" data-gl></div>
         <div>
           <p class="measure" style="color:var(--ink-2)">The workshop I began building at the age of <strong>eight</strong>.<br>A testament to my lifelong passion for designing, creating, and bringing ideas to life.</p>
         </div>
       </div>
       <div class="workshop-strip">
-        ${WORKSHOP_STRIP.map((w) => `<div class="photo-frame"><img src="${w.file}" alt="${w.alt}"></div>`).join("")}
+        ${WORKSHOP_STRIP.map((w) => `<div class="photo-frame" data-gl-frame><img src="${w.file}" alt="${w.alt}" data-gl></div>`).join("")}
       </div>
     </div>`;
 }
@@ -141,5 +141,6 @@ window.addEventListener("load", function () {
   initHeroDepth();
   initTilt();
   initMagnetic();
+  initWebGL();
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });
