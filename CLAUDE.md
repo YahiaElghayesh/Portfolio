@@ -31,3 +31,13 @@ new remote tip) rather than a plain `git merge` that could fast-forward past
 your own commits — verify with `git log --oneline --graph --all` that your
 commits are still reachable from HEAD after merging, not just that the merge
 "succeeded" with no conflicts.
+
+## Derived images and the WebGL stage
+
+Some images on the site are *derived* from the supplied photos (a cut-out of
+the hero, monocular depth maps, a graded sparks photo). They are recorded in
+`assets/img/DERIVED_ASSETS.json` with their source and processing, separately
+from `PHOTO_MANIFEST.json`, which stays the record of supplied photos. If a
+project's hero photo changes in `LAYOUTS`, its depth map in
+`assets/img/depth/` (indexed by `depth-maps.js`) must be regenerated too, or
+the Work tile silently falls back to a flat image.

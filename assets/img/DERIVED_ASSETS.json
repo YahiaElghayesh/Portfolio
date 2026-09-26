@@ -1,0 +1,35 @@
+{
+  "_about": "Images the site uses that were derived from Yahia's own photos by processing, not supplied directly. The source photo is always listed; nothing here replaces a source. PHOTO_MANIFEST.json remains the record of every supplied photo.",
+  "tools": {
+    "background removal": "rembg 2.x, model isnet-general-use (ONNX, CPU)",
+    "depth": "Depth Anything V2 Small (onnx-community/depth-anything-v2-small, ONNX, CPU)",
+    "grading and compositing": "Pillow + OpenCV"
+  },
+  "assets": [
+    {
+      "file": "assets/img/hero3d/yahia-chair.webp",
+      "source": "assets/img/headshot.webp",
+      "process": "Yahia and the chair cut out of the studio background (isnet-general-use), trimmed to the subject with 40px margin, 1400px tall, WebP with alpha.",
+      "used_by": "Home hero: the fallback <img>, and the colour texture of the WebGL relief mesh and point cloud."
+    },
+    {
+      "file": "assets/img/hero3d/yahia-chair-depth.webp",
+      "source": "assets/img/headshot.webp",
+      "process": "Monocular depth, re-normalised inside the silhouette only (2nd-98th percentile) so the figure uses the full range, then bled outward past the edge so edge vertices never snap to zero, Gaussian sigma 3, half resolution.",
+      "used_by": "Home hero: displacement for the relief mesh and the point cloud."
+    },
+    {
+      "file": "assets/img/depth/*.webp",
+      "source": "Each project's LAYOUTS hero per version (getHeroImage), plus the INOS Watcher V3 and INOS Gauge V3 cut-out renders used on the home showroom ring.",
+      "process": "Monocular depth at 518px, normalised inside the alpha for cut-outs (globally for context photos), edge-bled for cut-outs, Gaussian sigma 2, half resolution.",
+      "index": "assets/img/depth/depth-maps.js maps each source photo path to its depth map.",
+      "used_by": "Work page tiles and the home showroom: 3D relief (cut-outs) or in-frame parallax (context photos)."
+    },
+    {
+      "file": "assets/img/graded/sparks.webp",
+      "source": "assets/img/workshop-set/cutting-metal-with-angle-grinder-sparks-flying.webp",
+      "process": "Filmic contrast, split-tone (shadows toward the site's near-black, highlights toward the tan accent), vignette centred on the grinder. Also sparks-sm.webp at half size.",
+      "used_by": "Home workshop section, full-bleed. The grinder's contact point (53% across, 80% down) is the emitter for the live GPU sparks."
+    }
+  ]
+}

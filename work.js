@@ -2,26 +2,28 @@
 
 function renderTileVisual(image, alt) {
   const cls = isCutout(image) ? "is-cutout" : "is-context";
-  return `<span class="tile-visual ${cls}"><img src="${image.file}" alt="${alt || ""}"></span>`;
+  return `<span class="tile-visual ${cls}" data-img="${image.file}" data-kind="${image.kind}"><img class="tile-img" src="${image.file}" alt="${alt || ""}" loading="lazy"></span>`;
 }
 
 // Versions are visible from the menu itself, not just once you're inside a
-// project — every version label shown right on its tile.
+// project: every version label shown right on its tile.
 function renderTileVersions(unit) {
   if (unit.versions.length < 2) return "";
   return `<span class="tile-versions">${unit.versions.map((v) => v.versionLabel).join(" &middot; ")}</span>`;
 }
 
+// The photo inside each tile is drawn by the GPU as a relief of the product
+// (see enhanceTiles below), so the tile itself stays flat: its rectangle is
+// what the relief is pinned to.
 function renderProjectTile(unit) {
   const hero = getHeroImage(unit, 0);
-  // Two transform layers, deliberately on two different elements: the outer
-  // button is carried through depth by the scroll, the inner surface tilts to
-  // the pointer. On one element the two would overwrite each other.
   return `<button type="button" class="project-tile" id="${unit.id}" data-unit="${unit.id}" aria-haspopup="dialog">
-    <span class="tile-inner sheen" data-tilt="8" data-tilt-lift="40">
+    <span class="tile-inner">
       ${renderTileVisual(hero, unit.title)}
-      <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
-      ${renderTileVersions(unit)}
+      <span class="tile-meta">
+        <span class="tile-title">${unit.title}${unit.subtitle ? `<span class="subtitle">${unit.subtitle}</span>` : ""}</span>
+        ${renderTileVersions(unit)}
+      </span>
     </span>
   </button>`;
 }
@@ -132,7 +134,7 @@ document.addEventListener("keydown", (e) => {
 
 document.getElementById("work-intro").innerHTML = `
   <div class="container">
-    <h1 data-reveal-text>Featured work</h1>
+    <h1>Featured work</h1>
     <div class="field-nav">${FIELDS.map((f) => `<a href="#${f.category}-nav">${f.categoryLabel}</a>`).join("")}</div>
   </div>`;
 
@@ -147,17 +149,41 @@ if (location.hash) {
   if (findUnitById(unitId)) openProject(unitId, document.getElementById(unitId));
 }
 
+// Every tile's product becomes a lit 3D relief built from its own photo and
+// depth map. Cut-out renders turn in real space toward the pointer (and idle
+// on a phone); photos with their background still in them stay locked to
+// the tile and move *inside* it instead. A tile keeps its real <img> until
+// its relief is drawing, so nothing is ever blank.
+function enhanceTiles(S) {
+  document.querySelectorAll(".project-tile .tile-visual").forEach((vis) => {
+    const file = vis.getAttribute("data-img");
+    const cutout = vis.classList.contains("is-cutout");
+    addRelief(S, {
+      el: vis, img: vis.querySelector("img"), color: file, depth: DEPTH_MAPS[file],
+      mode: cutout ? "object" : "window", pad: 0.82, radius: [13, 13, 13, 13],
+      hoverEl: vis.closest(".project-tile"),
+    }).catch(() => {});
+  });
+}
+
+// The page title arrives as two stacked slabs of type.
+function introWorkTitle() {
+  if (prefersReduced || typeof gsap === "undefined") return;
+  gsap.from(".work-intro h1", { yPercent: 40, opacity: 0, duration: 1.2, ease: "expo.out" });
+  gsap.from(".field-nav a", { y: 16, opacity: 0, duration: 0.7, stagger: 0.05, ease: "power3.out", delay: 0.25 });
+}
+
 window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);
+  introWorkTitle();
   initHeadingReveals();
   initFadeUps();
   initDepthBackdrop();
   initDepthFloor();
   initScrollVelocity();
   initDepthFlow();
-  initPhotoParallax();
   initTilt();
   initMagnetic();
-  initWebGL();
+  if (willUseWebGL()) initStage().then(enhanceTiles).catch(() => {});
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 });

@@ -203,15 +203,14 @@ function initDepthFlow(root) {
 
   // The objects, where depth is the whole point, and the reading surfaces,
   // which have to come to rest flat and legible for much longer.
-  // Photo frames come out of this list when WebGL is going to run, because
-  // there they are only a border around a plane the GPU draws. CSS would
-  // rotate the frame while the plane, positioned from the frame's
-  // screen rectangle, stayed square to the camera, and the two would
-  // disagree on every frame. WebGL does that element's 3D instead.
+  // Project tiles come out of this list when WebGL is going to run: there,
+  // the product inside each tile is an object the GPU turns in real 3D, and
+  // it is positioned from the tile's screen rectangle. A CSS rotation on the
+  // tile would move that rectangle out from under it every frame.
   var OBJECTS = willUseWebGL()
-    ? ".project-tile, .partner-card, .toolbox-panel"
-    : ".project-tile, .partner-card, .photo-frame, .toolbox-panel, .workshop-lead .photo-frame";
-  var SURFACES = "#main .section > .container, .work-intro > .container, .field-stage > .container";
+    ? ".partner-card, .toolbox-group"
+    : ".project-tile, .partner-card, .toolbox-group";
+  var SURFACES = "#main .section > .container, .work-intro > .container";
 
   var objects = Array.prototype.slice.call(scope.querySelectorAll(OBJECTS));
   // Never drive one depth target from inside another. Objects win; the text
@@ -345,52 +344,6 @@ function initDepthFloor() {
   });
 }
 
-// Depth inside a photograph, not just around it. The image is overscaled and
-// then panned vertically inside its own frame across the frame's passage
-// through the viewport, so photo and frame move at different rates. That
-// difference in rate is the whole effect — it is the one depth cue that
-// survives on a phone, where there is no cursor to tilt anything.
-//
-// The overscale is set here and not in the stylesheet on purpose: if GSAP
-// never runs, or the reader asked for reduced motion, a CSS scale would just
-// leave every photo permanently cropped with nothing ever moving it.
-//
-// Only frames whose image already fills them are eligible. A cutout sits on
-// its background with visible air around it, so panning it would slide the
-// object itself rather than reveal more photograph, and the detail modal's
-// photos scroll inside the modal rather than with the page.
-function initPhotoParallax(root) {
-  if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
-  var scope = root || document;
-  // [data-gl] images are handed to the GPU, which does its own framing in
-  // the shader, so panning the (now hidden) DOM image would be wasted work.
-  var imgs = scope.querySelectorAll(".photo-frame img:not([data-gl]), .tile-visual.is-context img:not([data-gl])");
-
-  imgs.forEach(function (img) {
-    if (img.dataset.parallaxBound) return;
-    img.dataset.parallaxBound = "1";
-    var frame = img.closest(".photo-frame, .tile-visual");
-    if (!frame) return;
-
-    gsap.set(img, { scale: 1.16, transformOrigin: "50% 50%" });
-    gsap.fromTo(
-      img,
-      { yPercent: -6 },
-      {
-        yPercent: 6,
-        ease: "none",
-        scrollTrigger: {
-          trigger: frame,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 0.5,
-          invalidateOnRefresh: true,
-        },
-      }
-    );
-  });
-}
-
 // Project photo galleries: clicking a thumbnail trades places with the main
 // photo — the photo that was in main moves into that thumbnail's spot — so
 // whatever was showing before is always one more click away, never stranded.
@@ -447,69 +400,6 @@ function initMagnetic(root) {
       my(0);
     });
   });
-}
-
-// Hero depth: the portrait sits on a nearer plane than the headline, so the
-// two separate as the cursor moves. That separation is what reads as real
-// space, rather than a photo with an effect on it.
-function initHeroDepth() {
-  var hero = document.querySelector(".hero");
-  if (!hero || prefersReduced || typeof gsap === "undefined") return;
-  var portrait = hero.querySelector(".hero-portrait");
-  var content = hero.querySelector(".hero-content");
-  if (!portrait || !content) return;
-
-  // Scroll-driven, so it is just as present on a phone as on a desktop:
-  // the portrait swings away into depth as you scroll through the hero,
-  // and the text sinks back behind it. Both start neutral at the top of
-  // the page, so the first paint is never a tilted or faded hero.
-  var glOwnsPortrait = willUseWebGL();
-
-  if (typeof ScrollTrigger !== "undefined") {
-    var pass = { trigger: hero, start: "top top", end: "bottom top", scrub: 0.6 };
-    // The portrait's own frame stays still when WebGL has it: the shader
-    // bends the photograph itself, and moving the frame underneath would
-    // just drag the plane off the box it is meant to fill.
-    if (!glOwnsPortrait) {
-      gsap.set(portrait, { transformOrigin: "50% 50%", transformPerspective: 1100 });
-      gsap.fromTo(
-        portrait,
-        { rotationY: 0, rotationX: 0, z: 0 },
-        { rotationY: -18, rotationX: 11, z: -300, ease: "none", scrollTrigger: pass }
-      );
-    }
-    gsap.set(content, { transformOrigin: "0% 50%", transformPerspective: 1100 });
-    gsap.fromTo(
-      content,
-      { z: 0, opacity: 1 },
-      { z: -200, opacity: 0.25, ease: "none", scrollTrigger: pass }
-    );
-  }
-
-  // The pointer layer rides on the photo itself, one level inside the frame
-  // the scroll is already moving. Two systems must never write the same
-  // element's transform, or the last one to run silently wins.
-  var photo = portrait.querySelector("img");
-  if (!isCoarsePointer && photo && !glOwnsPortrait) {
-    gsap.set(photo, { transformPerspective: 900, transformOrigin: "50% 50%", scale: 1.06 });
-    var pRx = gsap.quickTo(photo, "rotationX", { duration: 0.9, ease: "power3" });
-    var pRy = gsap.quickTo(photo, "rotationY", { duration: 0.9, ease: "power3" });
-    var pX = gsap.quickTo(photo, "x", { duration: 0.9, ease: "power3" });
-    var pY = gsap.quickTo(photo, "y", { duration: 0.9, ease: "power3" });
-
-    hero.addEventListener("pointermove", function (e) {
-      var px = e.clientX / window.innerWidth - 0.5;
-      var py = e.clientY / window.innerHeight - 0.5;
-      pRy(px * 10);
-      pRx(-py * 8);
-      pX(px * 20);
-      pY(py * 15);
-    }, { passive: true });
-
-    hero.addEventListener("pointerleave", function () {
-      pRx(0); pRy(0); pX(0); pY(0);
-    });
-  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
