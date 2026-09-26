@@ -34,7 +34,7 @@ function renderFieldStage(field) {
     <section class="field-stage" data-field="${field.category}">
       <div class="container">
         <div class="field-stage-head">
-          <h2 id="${field.category}-nav">${field.categoryLabel}</h2>
+          <h2 id="${field.category}-nav" data-reveal-text>${field.categoryLabel}</h2>
           <span class="field-count">${String(n).padStart(2, "0")} projects</span>
         </div>
         <div class="project-grid">${field.units.map(renderProjectTile).join("")}</div>
@@ -134,7 +134,7 @@ document.addEventListener("keydown", (e) => {
 
 document.getElementById("work-intro").innerHTML = `
   <div class="container">
-    <h1>Featured work</h1>
+    <h1 data-reveal-text>Featured work</h1>
     <div class="field-nav">${FIELDS.map((f) => `<a href="#${f.category}-nav">${f.categoryLabel}</a>`).join("")}</div>
   </div>`;
 
@@ -161,23 +161,31 @@ function enhanceTiles(S) {
     addRelief(S, {
       el: vis, img: vis.querySelector("img"), color: file, depth: DEPTH_MAPS[file],
       mode: cutout ? "object" : "window", pad: 0.82, radius: [13, 13, 13, 13],
-      hoverEl: vis.closest(".project-tile"),
+      hoverEl: vis.closest(".project-tile"), opacityEl: vis.closest(".project-tile"),
     }).catch(() => {});
   });
 }
 
-// The page title arrives as two stacked slabs of type.
-function introWorkTitle() {
-  if (prefersReduced || typeof gsap === "undefined") return;
-  gsap.from(".work-intro h1", { yPercent: 40, opacity: 0, duration: 1.2, ease: "expo.out" });
-  gsap.from(".field-nav a", { y: 16, opacity: 0, duration: 0.7, stagger: 0.05, ease: "power3.out", delay: 0.25 });
+// Each field's tiles are dealt in, left to right, as the field arrives.
+// Only when the GPU is drawing the products: without it the tiles are
+// carried by the depth flow instead, and two animations on one card's
+// opacity would fight.
+function initTileEntrances() {
+  if (prefersReduced || typeof ScrollTrigger === "undefined" || !willUseWebGL()) return;
+  document.querySelectorAll(".project-grid").forEach((grid) => {
+    gsap.fromTo(grid.querySelectorAll(".project-tile"), { y: 90, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 1.1, stagger: 0.09, ease: "power3.out",
+      scrollTrigger: { trigger: grid, start: "top 88%" },
+    });
+  });
+  gsap.fromTo(".field-nav a", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.05, ease: "power3.out", delay: 0.35 });
 }
 
 window.addEventListener("load", function () {
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);
-  introWorkTitle();
   initHeadingReveals();
   initFadeUps();
+  initTileEntrances();
   initDepthBackdrop();
   initDepthFloor();
   initScrollVelocity();

@@ -5,20 +5,31 @@ var isCoarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matc
 
 var lenisInstance = null;
 
+// Mobile browsers resize the viewport every time the address bar shows or
+// hides. By default ScrollTrigger treats that as a real resize and
+// recalculates every trigger mid-scroll, which is what makes pinned sections
+// jump on a phone. Ignore those.
+if (typeof ScrollTrigger !== "undefined") {
+  ScrollTrigger.config({ ignoreMobileResize: true });
+}
+
+// Lenis is driven by GSAP's ticker and nothing else. It used to be driven
+// twice: once by its own requestAnimationFrame loop (timestamps in ms since
+// navigation) and once by the ticker (seconds since GSAP loaded, times
+// 1000). The two clocks disagree by a few hundred ms, so every frame Lenis
+// was told time went forward, then backward: smooth scrolling stuttered
+// and overshot, and everything tied to scroll position inherited it.
 function initSmoothScroll() {
   if (prefersReduced || typeof Lenis === "undefined") return null;
   var lenis = new Lenis({ duration: 1.1, smoothWheel: true });
   lenisInstance = lenis;
   document.documentElement.classList.add("has-smooth-scroll");
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-  if (window.ScrollTrigger) {
-    lenis.on("scroll", ScrollTrigger.update);
+  if (typeof gsap !== "undefined") {
+    if (window.ScrollTrigger) lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
+  } else {
+    (function raf(time) { lenis.raf(time); requestAnimationFrame(raf); })(0);
   }
   return lenis;
 }
@@ -57,12 +68,17 @@ function splitLines(el) {
   var words = el.textContent.trim().split(/\s+/);
   el.textContent = "";
   if (canAnimate) el.classList.add("split");
+  // Words are joined by a real space *between* the spans. It used to be a
+  // non-breaking space inside each span: harmless while every word is its
+  // own inline-block, but with motion off the spans are plain inline text,
+  // the whole heading became one unbreakable string, and on a phone it ran
+  // straight off the side of the screen.
   words.forEach(function (w, i) {
     var span = document.createElement("span");
     span.className = "line";
-    span.style.transitionDelay = i * 0 + "s";
-    span.textContent = w + (i < words.length - 1 ? " " : "");
+    span.textContent = w;
     el.appendChild(span);
+    if (i < words.length - 1) el.appendChild(document.createTextNode(" "));
   });
 }
 
@@ -220,12 +236,16 @@ function initDepthFlow(root) {
   });
 
   apply(objects, narrow ? 14 : 18, narrow ? 300 : 420, 0.25, narrow ? 11 : 17);
-  apply(surfaces, narrow ? 5 : 7, narrow ? 140 : 200, 0.45, 0);
+  apply(surfaces, narrow ? 3 : 4, narrow ? 90 : 130, 0.6, 0);
 
   function apply(els, rot, dist, dim, fan) {
     els.forEach(function (el, i) {
       if (el.dataset.depthBound) return;
       el.dataset.depthBound = "1";
+      // Anything already on screen when the page opens would otherwise be
+      // drawn part-way through its arrival: dimmed and tilted back before
+      // the reader has scrolled at all. Those are left alone.
+      if (window.scrollY < 5 && el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
       gsap.set(el, { transformOrigin: "50% 50%", transformPerspective: 1100 });
 
       var side = rowPosition(el);
@@ -312,6 +332,8 @@ var scrollVelocitySigned = 0;
 function initScrollVelocity() {
   if (prefersReduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
   var impulse = 0;
+  var lastVel = -1;
+  var floorEl = document.querySelector(".depth-bg .floor");
 
   ScrollTrigger.create({
     onUpdate: function (self) {
@@ -325,7 +347,12 @@ function initScrollVelocity() {
     impulse *= 0.9;                                      // decays to nothing
     scrollVelocitySigned += (impulse - scrollVelocitySigned) * 0.12;
     if (Math.abs(scrollVelocitySigned) < 0.001) scrollVelocitySigned = 0;
-    document.documentElement.style.setProperty("--vel", Math.abs(scrollVelocitySigned).toFixed(3));
+    // Written onto the one element that reads it, and only when it has
+    // actually changed. Setting a custom property on <html> every frame
+    // made the browser recompute styles for the entire document every
+    // frame, just to dim one grid.
+    var v = Math.round(Math.abs(scrollVelocitySigned) * 200) / 200;
+    if (v !== lastVel && floorEl) { floorEl.style.setProperty("--vel", v); lastVel = v; }
   });
 }
 

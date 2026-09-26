@@ -83,7 +83,7 @@ function renderToolbox() {
       </div>
       <div class="toolbox-grid">
         ${TOOLBOX.map(
-          (group) => `<div class="toolbox-group" data-reveal>
+          (group) => `<div class="toolbox-group">
             <h3>${group.name}</h3>
             <ul class="tool-list">
               ${group.tools
@@ -200,36 +200,40 @@ renderContact("contact");
 renderFooter("site-footer");
 
 // ------------------------------------------------------------ choreography ---
+//
+// ORDER MATTERS. ScrollTrigger works out where each trigger starts in the
+// order the triggers were created, and a pinned section adds scroll length
+// to everything after it. So the three pins (hero, statement, showroom) are
+// created first, top to bottom, synchronously, and only then everything
+// that sits below them. Creating reveals first made every one of them fire
+// two screens early (and the ones after the showroom, five), so they had
+// finished before the reader ever reached them.
 
 const heroState = { progress: 0 };
+const ring = { pos: 0, target: 0, front: -1 };
 
 // The hero holds for one screen of scrolling while the portrait comes apart
-// into dust and the name opens up behind it. Pinned with ScrollTrigger (not
-// a scroll listener) so the progress is the same number the tweens use.
-function initHeroScroll() {
-  if (prefersReduced || typeof ScrollTrigger === "undefined") return;
+// into dust and the name opens up behind it.
+function pinHero() {
   const hero = document.getElementById("hero");
-  const pin = hero.querySelector(".hero-pin");
   const tl = gsap.timeline({
     scrollTrigger: {
-      trigger: hero, start: "top top", end: "+=100%", pin: pin, scrub: 0.6,
+      trigger: hero, start: "top top", end: "+=100%", pin: ".hero-pin", scrub: 0.6,
       onUpdate: (self) => { heroState.progress = self.progress; },
     },
   });
-  tl.to(".hn-1", { xPercent: -28, opacity: 0.12, ease: "none" }, 0)
-    .to(".hn-2", { xPercent: 22, opacity: 0.12, ease: "none" }, 0)
-    .to(".hero-copy", { y: -60, opacity: 0, ease: "none" }, 0)
-    // Without WebGL the fallback photo simply recedes; with it, the avatar
-    // shader does the dispersal and this does nothing visible.
+  tl.to(".hn-1", { xPercent: -28, ease: "none" }, 0)
+    .to(".hn-2", { xPercent: 22, ease: "none" }, 0)
+    .to(".hero-name", { opacity: 0.15, ease: "none" }, 0)
+    .to(".hero-copy", { y: -60, autoAlpha: 0, ease: "none" }, 0)
+    // Without WebGL the fallback photo recedes instead of dispersing.
     .to(".hero-avatar img", { scale: 0.86, opacity: 0, ease: "none" }, 0);
 }
 
-// Every word of the statement starts dim and lights up as it is scrolled
-// past, so it is read at the pace it is scrolled rather than skimmed.
-function initStatementScrub() {
+// Every word of the statement starts dim and lights as it is scrolled past.
+function wrapStatementWords() {
   const el = document.querySelector("[data-scrub-words]");
-  if (!el) return;
-  // Wrap each word (keeping <em> emphasis) in a span.
+  if (!el) return [];
   const walk = (node) => {
     Array.from(node.childNodes).forEach((n) => {
       if (n.nodeType === 3) {
@@ -237,15 +241,16 @@ function initStatementScrub() {
         n.textContent.split(/(\s+)/).forEach((part) => {
           if (!part) return;
           if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
-          else { const s = document.createElement("span"); s.className = "w"; s.textContent = part; frag.appendChild(s); }
+          else { const sp = document.createElement("span"); sp.className = "w"; sp.textContent = part; frag.appendChild(sp); }
         });
         n.replaceWith(frag);
       } else if (n.nodeType === 1) walk(n);
     });
   };
   walk(el);
-  if (prefersReduced || typeof ScrollTrigger === "undefined") return;
-  const words = el.querySelectorAll(".w");
+  return el.querySelectorAll(".w");
+}
+function pinStatement(words) {
   gsap.set(words, { opacity: 0.14 });
   gsap.to(words, {
     opacity: 1, stagger: 0.1, ease: "none",
@@ -253,12 +258,22 @@ function initStatementScrub() {
   });
 }
 
-// The two numbers count up when they come into view.
+// The showroom is pinned at load, not when its textures arrive: it has to
+// exist before anything below it is measured. The ring just turns up in it
+// when the GPU is ready.
+function pinShowroom() {
+  const N = SHOWROOM.length;
+  document.documentElement.classList.add("has-showroom");
+  return ScrollTrigger.create({
+    trigger: "#work-cta-section", start: "top top", end: "+=" + (N * 26) + "%", pin: ".showroom-pin", scrub: true,
+    onUpdate: (self) => { ring.target = self.progress * (N - 1); },
+  });
+}
+
 function initCounters() {
   document.querySelectorAll("[data-count]").forEach((el) => {
     const target = parseInt(el.getAttribute("data-count"), 10);
     const suffix = el.getAttribute("data-suffix") || "";
-    if (prefersReduced || typeof ScrollTrigger === "undefined") return;
     const o = { v: 0 };
     el.textContent = "0" + suffix;
     gsap.to(o, {
@@ -269,10 +284,8 @@ function initCounters() {
   });
 }
 
-// Sparks section: the photo settles from a slight push-in as it arrives; the
-// collage photos below drift at their own rates.
+// Sparks photo settles from a push-in; collage photos drift at their own rates.
 function initWorkshopMotion() {
-  if (prefersReduced || typeof ScrollTrigger === "undefined") return;
   gsap.fromTo(".sparks-img", { scale: 1.18 }, {
     scale: 1, ease: "none",
     scrollTrigger: { trigger: "#sparks-stage", start: "top bottom", end: "bottom top", scrub: true },
@@ -294,21 +307,12 @@ function initWorkshopMotion() {
 
 function buildShowroom(S) {
   const stageEl = document.getElementById("showroom-stage");
-  const section = document.getElementById("work-cta-section");
-  const label = section.querySelector(".showroom-label");
+  const label = document.querySelector("#work-cta-section .showroom-label");
   const lField = label.querySelector(".sl-field");
   const lTitle = label.querySelector(".sl-title");
   const lSub = label.querySelector(".sl-sub");
   const N = SHOWROOM.length;
-  const ring = { angle: 0, target: 0, front: -1 };
-  const step = (Math.PI * 2) / N;
-
-  // The ring is pinned for a few screens and turns one full product per
-  // stretch of scroll, landing each one square to the camera.
-  const st = ScrollTrigger.create({
-    trigger: section, start: "top top", end: "+=" + (N * 32) + "%", pin: ".showroom-pin", scrub: true,
-    onUpdate: (self) => { ring.target = -self.progress * step * (N - 1); },
-  });
+  const frame = { r: null, w: null };
 
   function setLabel(i) {
     if (i === ring.front) return;
@@ -318,47 +322,52 @@ function buildShowroom(S) {
     lTitle.textContent = it.title;
     lTitle.href = projectHref(it.id);
     lSub.textContent = it.subtitle || "";
-    if (!prefersReduced) gsap.fromTo(label.children, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, stagger: 0.04, ease: "power3.out", overwrite: true });
+    gsap.fromTo(label.children, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, stagger: 0.04, ease: "power3.out", overwrite: true });
   }
   setLabel(0);
 
+  // Once per frame, before any product reads it: where the stage is, and
+  // which product is in front. When scrolling stops between two products
+  // the display settles onto the nearer one instead of hanging half-way,
+  // without touching the scroll position itself.
+  S.add({
+    update: () => {
+      frame.r = stageEl.getBoundingClientRect();
+      frame.w = S.worldRect(frame.r);
+      const still = 1 - Math.min(Math.abs(scrollVelocitySigned) * 8, 1);
+      const goal = ring.target + (Math.round(ring.target) - ring.target) * still;
+      ring.pos += (goal - ring.pos) * 0.12;
+      setLabel(Math.max(0, Math.min(N - 1, Math.round(ring.pos))));
+    },
+  });
+
+  // A coverflow, not a ring: the product in front stands alone and large,
+  // its neighbours step aside and turn away, and anything more than two
+  // places off fades out. On a 13-piece ring, neighbours sat so close in
+  // angle that three or four products overlapped the one being named.
   SHOWROOM.forEach((it, i) => {
     addRelief(S, {
       el: stageEl, color: it.file, depth: DEPTH_MAPS[it.file], mode: "object", reflect: true,
       place: (relief, t) => {
-        if (i === 0) {
-          ring.angle += (ring.target - ring.angle) * 0.12;
-          const idx = ((Math.round(-ring.angle / step) % N) + N) % N;
-          setLabel(idx);
-        }
-        const r = stageEl.getBoundingClientRect();
-        const m = relief.mesh, mat = relief.mat;
-        if (r.bottom < 0 || r.top > S.vh() || r.width === 0) { m.visible = false; if (relief.mirror) relief.mirror.visible = false; return; }
+        const m = relief.mesh, mat = relief.mat, r = frame.r, w = frame.w;
+        if (!r || r.bottom < 0 || r.top > S.vh() || r.width === 0) { m.visible = false; return; }
+        const d = i - ring.pos, ad = Math.abs(d), sg = Math.sign(d);
+        if (ad > 2.6) { m.visible = false; return; }
         m.visible = true;
-        const w = S.worldRect(r);
-        // An elliptical track: wide across the screen so neighbours stand
-        // clear of the front piece, shallow in depth so the back of the ring
-        // stays in the room instead of vanishing into the distance.
-        // On a phone the ring is wider than the screen, so the front piece
-        // is large and its neighbours sit half off either edge, a carousel
-        // you can see continuing rather than a row of thumbnails.
         const narrow = w.w < 700;
-        const Rx = narrow ? w.w * 0.78 : Math.min(w.w * 0.44, 820);
-        const Rz = narrow ? w.w * 0.9 : Math.min(w.w * 0.36, 640);
-        const box = narrow ? Math.min(w.w * 0.62, w.h * 0.46) : Math.min(w.w * 0.24, w.h * 0.6, 440);
-        const a = i * step + ring.angle;
-        const facing = (Math.cos(a) + 1) / 2; // 1 at the front, 0 at the back
+        const box = narrow ? Math.min(w.w * 0.72, w.h * 0.5) : Math.min(w.w * 0.3, w.h * 0.62, 500);
+        const gap1 = box * (narrow ? 0.92 : 1.0), gap2 = box * 0.42;
+        const x = sg * (ad <= 1 ? ad * gap1 : gap1 + (ad - 1) * gap2);
+        const scale = 1 - Math.min(ad, 1) * 0.3 - Math.max(ad - 1, 0) * 0.12;
         let fw = box, fh = box / relief.aspect;
         if (fh > box) { fh = box; fw = fh * relief.aspect; }
-        const scale = 0.45 + Math.pow(facing, 2.2) * 0.85;
         fw *= scale; fh *= scale;
-        const floorY = w.y - box * 0.45;
+        const floorY = w.y - box * 0.42;
         m.scale.set(fw, fh, 1);
-        m.position.set(w.x + Math.sin(a) * Rx, floorY + fh / 2, (Math.cos(a) - 1) * Rz);
-        m.rotation.set(0, a * 0.3 + Math.sin(t * 0.5 + i) * 0.05, 0);
-        mat.uniforms.uRelief.value = Math.min(fw, fh) * 0.34;
-        mat.uniforms.uFade.value = Math.pow(facing, 2.4);
-        m.visible = facing > 0.12;
+        m.position.set(w.x + x, floorY + fh / 2, -Math.min(ad, 2.6) * box * 0.55);
+        m.rotation.set(0, -sg * Math.min(ad, 1) * 0.6 + Math.sin(t * 0.5 + i) * 0.04, 0);
+        mat.uniforms.uRelief.value = Math.min(fw, fh) * 0.22;
+        mat.uniforms.uFade.value = ad <= 1 ? 1 - ad * 0.45 : Math.max(0, 0.55 * (1 - (ad - 1) / 1.6));
         if (relief.mirror) {
           const mm = relief.mirror;
           mm.scale.set(fw, -fh, 1);
@@ -368,25 +377,20 @@ function buildShowroom(S) {
       },
     }).catch(() => {});
   });
-
-  document.documentElement.classList.add("has-showroom");
-  ScrollTrigger.refresh();
-  return st;
 }
 
+// Resolves with the avatar (or null) once the stage is up.
 function startStage() {
   const avatarEl = document.getElementById("hero-avatar");
   const sparksImg = document.querySelector(".sparks-img");
   return initStage().then((S) => {
-    const jobs = [];
     const avatar = addAvatar(S, {
       el: avatarEl,
       img: avatarEl.querySelector("img"),
       color: "assets/img/hero3d/yahia-chair.webp",
       depth: "assets/img/hero3d/yahia-chair-depth.webp",
       progress: () => heroState.progress,
-    }).then((a) => { a.assemble(2.4); return a; });
-    jobs.push(avatar);
+    });
 
     // The grinder's contact point, measured on the photo (53% across, 80%
     // down); the real sparks leave it between up-left and dead left.
@@ -396,8 +400,7 @@ function startStage() {
     });
     if (sparksImg.complete) startSparks(); else sparksImg.addEventListener("load", startSparks, { once: true });
 
-    // A small burst of sparks from the pointer when it lands on a contact
-    // link: a tiny reward for reaching the end.
+    // A burst of sparks from the pointer when it lands on a contact link.
     if (!isCoarsePointer) {
       const burst = addSparks(S, { burst: true, angle: [0.35, 2.8], count: 160 });
       document.querySelectorAll(".contact-link").forEach((a) =>
@@ -405,68 +408,115 @@ function startStage() {
       );
     }
 
-    if (typeof ScrollTrigger !== "undefined" && SHOWROOM.length) buildShowroom(S);
-    return Promise.race([
-      avatar,
-      new Promise((res) => setTimeout(res, 3500)),
-    ]);
+    if (SHOWROOM.length) buildShowroom(S);
+    return avatar;
   });
 }
 
-// ------------------------------------------------------------------- intro ---
-// A short curtain on the first visit of a session: a counter tracks the
-// portrait's point cloud actually loading, then the curtain lifts and the
-// cloud condenses into the figure. Never longer than the assets take, and
-// hard-capped so a slow network cannot hold the page hostage.
-function runIntro(ready) {
+// ------------------------------------------------------------------ entrance ---
+// Every visit gets an entrance: the name rises into place, the portrait
+// condenses out of a cloud of points, the copy follows. The first visit in
+// a session puts a short loading curtain in front of it (the counter tracks
+// the portrait actually loading), and the entrance starts as it lifts, not
+// behind it.
+function playEntrance(avatarReady) {
   const root = document.documentElement;
-  const count = document.querySelector("[data-intro-count]");
-  if (!root.classList.contains("intro")) return ready;
-  const o = { v: 0 };
-  const counter = gsap.to(o, {
-    v: 92, duration: 1.6, ease: "power2.out",
-    onUpdate: () => { count.textContent = String(Math.round(o.v)).padStart(3, "0"); },
-  });
-  const cap = new Promise((res) => setTimeout(res, 4000));
-  return Promise.race([ready, cap]).then(() => {
-    counter.kill();
-    return new Promise((res) => {
-      gsap.to(o, {
-        v: 100, duration: 0.35, ease: "power1.out",
-        onUpdate: () => { count.textContent = String(Math.round(o.v)).padStart(3, "0"); },
-        onComplete: () => {
-          gsap.to(".intro-curtain", {
-            yPercent: -100, duration: 1.0, ease: "expo.inOut",
-            onComplete: () => {
-              root.classList.remove("intro");
-              try { sessionStorage.setItem("ye-intro", "1"); } catch (e) {}
-              res();
-            },
-          });
-          gsap.from(".hn", { yPercent: 60, opacity: 0, duration: 1.2, stagger: 0.08, ease: "expo.out", delay: 0.45 });
-          gsap.from(".hero-copy > *", { y: 24, opacity: 0, duration: 0.9, stagger: 0.07, ease: "power3.out", delay: 0.7 });
-        },
-      });
+  const avatarEl = document.getElementById("hero-avatar");
+
+  const entrance = () => {
+    gsap.fromTo(".hn", { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.3, stagger: 0.09, ease: "expo.out" });
+    gsap.fromTo(".hero-copy > *", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, stagger: 0.08, ease: "power3.out", delay: 0.35 });
+    avatarReady.then((a) => {
+      if (a) { a.assemble(2.2); return; }
+      avatarEl.classList.remove("gl-wait");
+      gsap.fromTo(avatarEl.querySelector("img"), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
     });
-  });
+  };
+
+  if (!root.classList.contains("intro")) { entrance(); return Promise.resolve(); }
+
+  const count = document.querySelector("[data-intro-count]");
+  const o = { v: 0 };
+  const counter = gsap.to(o, { v: 92, duration: 1.6, ease: "power2.out", onUpdate: () => { count.textContent = String(Math.round(o.v)).padStart(3, "0"); } });
+  const cap = new Promise((res) => setTimeout(res, 4000));
+  return Promise.race([avatarReady, cap]).then(() => new Promise((res) => {
+    counter.kill();
+    gsap.to(o, {
+      v: 100, duration: 0.3, ease: "power1.out",
+      onUpdate: () => { count.textContent = String(Math.round(o.v)).padStart(3, "0"); },
+      onComplete: () => {
+        gsap.set(".hn, .hero-copy > *", { opacity: 0 });
+        gsap.to(".intro-curtain", {
+          yPercent: -100, duration: 1.0, ease: "expo.inOut",
+          onComplete: () => {
+            root.classList.remove("intro");
+            try { sessionStorage.setItem("ye-intro", "1"); } catch (e) {}
+            res();
+          },
+        });
+        gsap.delayedCall(0.45, entrance);
+      },
+    });
+  }));
 }
 
 window.addEventListener("load", function () {
+  const motion = !prefersReduced && typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined";
+  const gl = motion && willUseWebGL();
+  const words = wrapStatementWords();
   document.querySelectorAll("[data-reveal-text]").forEach(splitLines);
+
+  if (!motion) {
+    document.documentElement.classList.remove("intro");
+    return;
+  }
+
+  // While the GPU portrait is loading, the fallback photo is held back so
+  // the figure can condense out of points instead of popping from photo to
+  // points. If the GPU never delivers, it is shown after all.
+  const avatarEl = document.getElementById("hero-avatar");
+  if (gl) avatarEl.classList.add("gl-wait");
+
+  // 1. Pins, top to bottom.
+  pinHero();
+  pinStatement(words);
+  const showroomPin = gl && SHOWROOM.length ? pinShowroom() : null;
+
+  // 2. Everything else.
   initHeadingReveals();
   initFadeUps();
-  initDepthBackdrop();
-  initDepthFloor();
-  initScrollVelocity();
-  initHeroScroll();
-  initStatementScrub();
   initCounters();
   initWorkshopMotion();
   initDepthFlow();
+  initDepthBackdrop();
+  initDepthFloor();
+  initScrollVelocity();
   initTilt();
   initMagnetic();
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
 
-  let ready = Promise.resolve();
-  if (willUseWebGL()) ready = startStage().catch(() => {});
-  runIntro(ready).then(() => { if (window.ScrollTrigger) ScrollTrigger.refresh(); });
+  let avatarReady = Promise.resolve(null);
+  let lateAvatar = Promise.resolve(null);
+  if (gl) {
+    avatarReady = lateAvatar = startStage().catch(() => {
+      // No stage after all: the showroom goes back to its plain row, and
+      // everything below it is re-measured without the pin.
+      if (showroomPin) {
+        showroomPin.kill(true);
+        document.documentElement.classList.remove("has-showroom");
+        ScrollTrigger.refresh();
+      }
+      return null;
+    }).then((a) => a || null);
+    // Never hold the hero hostage to a slow texture.
+    avatarReady = Promise.race([avatarReady, new Promise((res) => setTimeout(() => res(null), 4500))]);
+  }
+  playEntrance(avatarReady).then(() => {
+    ScrollTrigger.refresh();
+    // A portrait that arrives after the entrance gave up waiting still
+    // condenses into place (never behind the curtain) instead of sitting
+    // there as a scattered cloud. assemble() ignores a second call.
+    lateAvatar.then((a) => { if (a) a.assemble(1.8); });
+  });
 });

@@ -355,6 +355,9 @@ function buildStage(THREE) {
   var bgScene = new THREE.Scene();
 
   var vw = window.innerWidth, vh = window.innerHeight;
+  var docH = document.documentElement.scrollHeight;
+  function measureDoc() { docH = document.documentElement.scrollHeight; }
+  if (window.ScrollTrigger) ScrollTrigger.addEventListener("refresh", measureDoc);
   function fitCamera(cam, z) {
     cam.aspect = vw / vh;
     cam.position.set(0, 0, z);
@@ -363,6 +366,7 @@ function buildStage(THREE) {
   }
   function resize() {
     vw = window.innerWidth; vh = window.innerHeight;
+    measureDoc();
     fg.setSize(vw, vh, false);
     if (bg) bg.setSize(vw, vh, false);
     fitCamera(fgCam, FG_Z);
@@ -371,15 +375,45 @@ function buildStage(THREE) {
   resize();
   window.addEventListener("resize", resize);
 
-  var loader = new THREE.TextureLoader();
-  function loadTex(url) {
+  // Textures are sized to what they can actually show, then uploaded to the
+  // GPU straight away in the background. Before, a 2000px product photo went
+  // up at full size (about 12MB of GPU memory each, 13 of them in the
+  // showroom) and only on the frame it first came on screen, which is
+  // exactly when the reader is scrolling: the page froze while it uploaded.
+  var TEX_MAX = tier === "low" ? 768 : 1024;
+  var uploadQueue = [];
+  function loadTex(url, maxSize) {
+    var limit = maxSize || TEX_MAX;
     return new Promise(function (res, rej) {
-      loader.load(url, function (t) {
+      var im = new Image();
+      im.decoding = "async";
+      im.onload = function () {
+        var w = im.naturalWidth, h = im.naturalHeight, src = im;
+        var k = Math.min(1, limit / Math.max(w, h));
+        if (k < 1) {
+          var c = document.createElement("canvas");
+          c.width = Math.round(w * k); c.height = Math.round(h * k);
+          var g = c.getContext("2d");
+          g.imageSmoothingQuality = "high";
+          g.drawImage(im, 0, 0, c.width, c.height);
+          src = c;
+        }
+        var t = src === im ? new THREE.Texture(im) : new THREE.CanvasTexture(src);
         t.minFilter = THREE.LinearFilter;
         t.generateMipmaps = false;
+        t.needsUpdate = true;
+        uploadQueue.push(t);
         res(t);
-      }, undefined, rej);
+      };
+      im.onerror = rej;
+      im.src = url;
     });
+  }
+  // One texture per frame, so the uploads never stack into a single long
+  // frame either.
+  function drainUploads() {
+    var t = uploadQueue.shift();
+    if (t) { try { fg.initTexture(t); } catch (e) {} }
   }
 
   // DOM rect -> world centre and size.
@@ -402,15 +436,26 @@ function buildStage(THREE) {
     THREE: THREE, tier: tier, fg: fg, bg: bg, fgScene: fgScene, bgScene: bgScene,
     fgCam: fgCam, pointer: pointer, loadTex: loadTex, worldRect: worldRect,
     vw: function () { return vw; }, vh: function () { return vh; },
+    // Page height, cached: reading scrollHeight every frame forces a layout.
+    // Re-read on resize and whenever ScrollTrigger re-measures (pins change it).
+    docH: function () { return docH; },
     add: function (a) { actors.push(a); return a; },
     time: 0,
   };
 
+  // The object layer is redrawn only while something on it is showing (plus
+  // one frame after, to clear it). Most of the page has nothing there, and
+  // a full-screen redraw every frame is wasted battery on a phone.
+  var fgDrew = true;
   function frame(t) {
     if (lost) return;
     S.time = typeof t === "number" ? t : 0;
+    drainUploads();
     for (var i = 0; i < actors.length; i++) actors[i].update(S.time);
-    fg.render(fgScene, fgCam);
+    var any = false;
+    for (var k = 0; k < fgScene.children.length; k++) if (fgScene.children[k].visible) { any = true; break; }
+    if (any || fgDrew) fg.render(fgScene, fgCam);
+    fgDrew = any;
     if (bg) bg.render(bgScene, bgCam);
   }
   if (typeof gsap !== "undefined") gsap.ticker.add(frame);
@@ -463,7 +508,7 @@ function addDust(S) {
     update: function (t) {
       mat.uniforms.uTime.value = t;
       // The camera travels forward through the field as the page scrolls.
-      var max = Math.max(document.documentElement.scrollHeight - S.vh(), 1);
+      var max = Math.max(S.docH() - S.vh(), 1);
       pts.position.z = (window.scrollY / max) * 3600;
       pts.position.x += (S.pointer.x * 70 - pts.position.x) * 0.04;
       pts.position.y += (-S.pointer.y * 50 - pts.position.y) * 0.04;
@@ -475,7 +520,7 @@ function addDust(S) {
 // opts: { el (anchor), img (fallback <img>), color, depth, progress () -> 0..1 }
 function addAvatar(S, opts) {
   var THREE = S.THREE;
-  return Promise.all([S.loadTex(opts.color), S.loadTex(opts.depth), sampleAlpha(opts.color, S.tier === "low" ? 175 : 290)])
+  return Promise.all([S.loadTex(opts.color, S.tier === "low" ? 1024 : 1408), S.loadTex(opts.depth, 1024), sampleAlpha(opts.color, S.tier === "low" ? 175 : 290)])
     .then(function (res) {
       var colorTex = res[0], depthTex = res[1], grid = res[2];
       var n = grid.uv.length / 2;
@@ -513,7 +558,7 @@ function addAvatar(S, opts) {
           uPlane: { value: new THREE.Vector2(1, 1) }, uRadius: { value: new THREE.Vector4(0, 0, 0, 0) },
           uFade: { value: 0 }, uHover: { value: 0 }, uParallax: { value: new THREE.Vector2(0, 0) },
           uLight: { value: new THREE.Vector3(-0.4, 0.5, 0.8) }, uTint: { value: new THREE.Color(0xe8c088) },
-          uReflect: { value: 0 }, uStep: { value: 1 / seg }, uEdgeCut: { value: 0.11 },
+          uReflect: { value: 0 }, uStep: { value: 1 / seg }, uEdgeCut: { value: 9 },
         },
       });
       var mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, seg, seg), meshMat);
@@ -530,7 +575,10 @@ function addAvatar(S, opts) {
       var assembled = { v: 0 };
       var avatar = {
         assembled: assembled,
+        assembling: false,
         assemble: function (dur) {
+          if (avatar.assembling) return;
+          avatar.assembling = true;
           if (typeof gsap === "undefined") { assembled.v = 1; return; }
           gsap.to(assembled, { v: 1, duration: dur || 2.2, ease: "power2.inOut" });
         },
@@ -542,9 +590,11 @@ function addAvatar(S, opts) {
           // Fit the figure inside its anchor, keeping the photo's aspect.
           var fw = w.w, fh = w.w / aspect;
           if (fh > w.h) { fh = w.h; fw = fh * aspect; }
-          group.position.set(w.x, w.y, 0);
+          // Sit the figure on the bottom of its box, like the photo it
+          // replaces (object-position: bottom), not floating in the middle.
+          group.position.set(w.x, w.y - (w.h - fh) / 2, 0);
           mat.uniforms.uSize.value.set(fw, fh);
-          mat.uniforms.uRelief.value = fh * 0.28;
+          mat.uniforms.uRelief.value = fh * 0.16;
           mat.uniforms.uPoint.value = (fw / grid.cols) * 1.55 * S.fg.getPixelRatio();
           mat.uniforms.uTime.value = t;
           mat.uniforms.uAssemble.value = assembled.v;
@@ -558,7 +608,7 @@ function addAvatar(S, opts) {
           pts.visible = ptsOn > 0.01;
           mesh.visible = meshOn > 0.01;
           mesh.scale.set(fw, fh, 1);
-          meshMat.uniforms.uRelief.value = fh * 0.28;
+          meshMat.uniforms.uRelief.value = fh * 0.16;
           meshMat.uniforms.uFade.value = meshOn;
           meshMat.uniforms.uLight.value.set(-0.5 + S.pointer.x * 1.6, 0.55 - S.pointer.y * 1.2, 0.75);
 
@@ -567,11 +617,11 @@ function addAvatar(S, opts) {
           // never something only a mouse can reveal.
           var ty, tx;
           if (isCoarsePointer) {
-            ty = Math.sin(t * 0.45) * 0.30 + prog * 0.9;
+            ty = Math.sin(t * 0.45) * 0.14 + prog * 0.9;
             tx = Math.sin(t * 0.31) * 0.05;
           } else {
-            ty = S.pointer.x * 0.75 + Math.sin(t * 0.4) * 0.05 + prog * 0.6;
-            tx = S.pointer.y * 0.22;
+            ty = S.pointer.x * 0.38 + Math.sin(t * 0.4) * 0.04 + prog * 0.6;
+            tx = S.pointer.y * 0.12;
           }
           rotY += (ty - rotY) * 0.06;
           rotX += (tx - rotX) * 0.06;
@@ -649,7 +699,7 @@ function addRelief(S, opts) {
           uPlane: { value: new THREE.Vector2(1, 1) }, uRadius: { value: new THREE.Vector4(0, 0, 0, 0) },
           uFade: { value: 1 }, uHover: { value: 0 }, uParallax: { value: new THREE.Vector2(0, 0) },
           uLight: { value: new THREE.Vector3(-0.4, 0.5, 0.8) }, uTint: { value: new THREE.Color(0xe8c088) },
-          uReflect: { value: reflect ? 1 : 0 }, uStep: { value: 1 / seg }, uEdgeCut: { value: opts.edgeCut || 0.34 },
+          uReflect: { value: reflect ? 1 : 0 }, uStep: { value: 1 / seg }, uEdgeCut: { value: opts.edgeCut || 9 },
         },
       });
     }
@@ -701,7 +751,11 @@ function addRelief(S, opts) {
 
         var r = opts.el.getBoundingClientRect();
         if (!relief.visible || r.bottom < -120 || r.top > S.vh() + 120 || r.width === 0) { mesh.visible = false; return; }
-        mesh.visible = true;
+        // The card this relief sits in may be fading in; the relief fades
+        // with it rather than hanging in the air ahead of its frame.
+        var op = opts.opacityEl && typeof gsap !== "undefined" ? +gsap.getProperty(opts.opacityEl, "opacity") : 1;
+        mat.uniforms.uFade.value = op;
+        mesh.visible = op > 0.01;
         var w = S.worldRect(r);
         var up = 1 - 2 * ((r.top + r.height / 2) / S.vh()); // +1 top of screen, -1 bottom
         up = Math.max(-1.3, Math.min(1.3, up));
@@ -731,12 +785,12 @@ function addRelief(S, opts) {
         if (fh > w.h * pad) { fh = w.h * pad; fw = fh * relief.aspect; }
         mesh.scale.set(fw, fh, 1);
         mesh.position.set(w.x, w.y, 0);
-        mat.uniforms.uRelief.value = Math.min(fw, fh) * 0.30;
+        mat.uniforms.uRelief.value = Math.min(fw, fh) * 0.2;
         // Turns with the scroll on every device, idles on a phone, and
         // swings hard toward the pointer on hover — enough to see round the
         // relief, which is the whole point of giving it depth.
-        var ty = (isCoarsePointer ? Math.sin(t * 0.55 + seed) * 0.22 : 0) + hx * 0.9 * hover;
-        var tx = up * -0.2 + hy * 0.6 * hover;
+        var ty = (isCoarsePointer ? Math.sin(t * 0.55 + seed) * 0.18 : 0) + hx * 0.6 * hover;
+        var tx = up * -0.16 + hy * 0.4 * hover;
         rotY += (ty - rotY) * 0.08;
         rotX += (tx - rotX) * 0.08;
         mesh.rotation.set(rotX, rotY, 0);
@@ -783,6 +837,8 @@ function addSparks(S, opts) {
   S.fgScene.add(lines);
 
   var active = 0;
+  var objPos = null; // CSS object-position of the photo, read once (not every frame)
+  window.addEventListener("resize", function () { objPos = null; });
   var sparks = {
     fire: function (clientX, clientY) {
       mat.uniforms.uBurstAt.value = S.time;
@@ -805,7 +861,8 @@ function addSparks(S, opts) {
       var img = opts.img, nw = img.naturalWidth || 2000, nh = img.naturalHeight || 1333;
       var sc = Math.max(r.width / nw, r.height / nh);
       var dw = nw * sc, dh = nh * sc;
-      var op = (getComputedStyle(img).objectPosition || "50% 50%").split(" ");
+      if (!objPos) objPos = (getComputedStyle(img).objectPosition || "50% 50%").split(" ");
+      var op = objPos;
       var ox = (r.width - dw) * (parseFloat(op[0]) / 100), oy = (r.height - dh) * (parseFloat(op[1]) / 100);
       var sx = r.left + ox + opts.point[0] * dw, sy = r.top + oy + opts.point[1] * dh;
       mat.uniforms.uOrigin.value.set(sx - S.vw() / 2, -(sy - S.vh() / 2));
